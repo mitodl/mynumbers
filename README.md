@@ -41,8 +41,8 @@ Then open http://localhost:8000/ (set `PORT` to use a different port).
 
 The game and explainer can be embedded in another app. `npm run build:lib`
 produces an ESM + UMD bundle (`dist/lib`) with type declarations.
-`react`, `react-dom`, and `styled-components` are peer dependencies that the
-host app provides.
+`react`, `react-dom`, `@emotion/react`, and `@emotion/styled` are peer
+dependencies that the host app provides.
 
 React host:
 

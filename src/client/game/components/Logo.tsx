@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const LogoBanner = styled.h1`
   display: flex;

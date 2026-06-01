@@ -1,4 +1,5 @@
-import styled, { createGlobalStyle, keyframes } from "styled-components"
+import styled from "@emotion/styled"
+import { Global, css, keyframes } from "@emotion/react"
 
 const tkFade = keyframes`
   from { opacity: 0; transform: translateY(-2px); }
@@ -23,11 +24,15 @@ const jumpPulse = keyframes`
   100% { box-shadow: inset 0 0 0 0 transparent; }
 `
 
-export const ExplainerGlobalStyles = createGlobalStyle`
-  body.explainer-mode {
-    background: #e8e8e8;
-  }
-`
+export const ExplainerGlobalStyles = () => (
+  <Global
+    styles={css`
+      body.explainer-mode {
+        background: #e8e8e8;
+      }
+    `}
+  />
+)
 
 export const ExplainerContainer = styled.div`
   --mit-red: #750014;

@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "../context/GameContext"
 
 const Wrapper = styled.div`

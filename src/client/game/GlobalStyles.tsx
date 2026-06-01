@@ -1,6 +1,6 @@
-import { createGlobalStyle } from "styled-components"
+import { Global, css } from "@emotion/react"
 
-export const GlobalStyles = createGlobalStyle`
+const globalCss = css`
   body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: #e8e8e8;
@@ -48,3 +48,6 @@ export const GlobalStyles = createGlobalStyle`
     pointer-events: none;
   }
 `
+
+export const GlobalStyles = () => <Global styles={globalCss} />
+

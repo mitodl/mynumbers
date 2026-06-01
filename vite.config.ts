@@ -4,7 +4,7 @@ import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
 
 // Library build: bundles the game + explainer for consumption by other apps.
-// react / react-dom / styled-components are left as peer dependencies so the
+// react / react-dom / @emotion are left as peer dependencies so the
 // host app provides a single shared copy.
 export default defineConfig({
   plugins: [
@@ -31,7 +31,9 @@ export default defineConfig({
         'react-dom',
         'react-dom/client',
         'react/jsx-runtime',
-        'styled-components',
+        '@emotion/react',
+        '@emotion/react/jsx-runtime',
+        '@emotion/styled',
       ],
       output: {
         globals: {
@@ -39,7 +41,9 @@ export default defineConfig({
           'react-dom': 'ReactDOM',
           'react-dom/client': 'ReactDOMClient',
           'react/jsx-runtime': 'jsxRuntime',
-          'styled-components': 'styled',
+          '@emotion/react': 'emotionReact',
+          '@emotion/react/jsx-runtime': 'emotionJsxRuntime',
+          '@emotion/styled': 'emotionStyled',
         },
       },
     },

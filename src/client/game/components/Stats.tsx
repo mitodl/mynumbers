@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useGameState } from "../context/GameContext"
 
 const StatsBar = styled.div`

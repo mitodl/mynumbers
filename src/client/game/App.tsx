@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { Link } from "./router"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "./context/GameContext"
 import { Logo } from "./components/Logo"
 import { ModeSelector } from "./components/ModeSelector"
