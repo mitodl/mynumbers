@@ -19,7 +19,7 @@ const SUBTITLES: Record<number, string> = {
 export function initCarousel(): void {
   const track = document.getElementById("ex-track")!
   const viewport = document.getElementById("ex-viewport")!
-  const dotsHost = document.getElementById("ex-dots")!
+  const dotsContainer = document.getElementById("ex-dots")!
   const prevBtn = document.getElementById("ex-prev") as HTMLButtonElement
   const nextBtn = document.getElementById("ex-next") as HTMLButtonElement
   const progressFill = document.getElementById("ex-progress-fill")!
@@ -30,88 +30,88 @@ export function initCarousel(): void {
   let current = 1
 
   for (let i = 1; i <= TOTAL_SLIDES; i++) {
-    const b = document.createElement("button")
-    b.className = "ex-dot"
-    b.setAttribute("role", "tab")
-    b.setAttribute("aria-label", `Slide ${i}`)
-    b.dataset.target = String(i)
-    b.addEventListener("click", () => goTo(i))
-    dotsHost.appendChild(b)
+    const dot = document.createElement("button")
+    dot.className = "ex-dot"
+    dot.setAttribute("role", "tab")
+    dot.setAttribute("aria-label", `Slide ${i}`)
+    dot.dataset.target = String(i)
+    dot.addEventListener("click", () => goToSlide(i))
+    dotsContainer.appendChild(dot)
   }
 
-  function goTo(n: number, opts?: { highlight?: boolean }): void {
-    n = Math.max(1, Math.min(TOTAL_SLIDES, n))
+  function goToSlide(slideNumber: number, options?: { highlight?: boolean }): void {
+    slideNumber = Math.max(1, Math.min(TOTAL_SLIDES, slideNumber))
     const previous = current
-    current = n
-    track.style.transform = `translateX(-${(n - 1) * 100}%)`
-    counter.textContent = String(n)
-    progressFill.style.width = (n / TOTAL_SLIDES * 100).toFixed(3) + "%"
-    subtitle.textContent = SUBTITLES[n] || ""
-    ;[...dotsHost.children].forEach((d, i) => (d as HTMLElement).classList.toggle("is-active", i === n - 1))
-    prevBtn.disabled = n === 1
-    nextBtn.disabled = n === TOTAL_SLIDES
-    if (opts && opts.highlight) {
-      const slide = track.children[n - 1] as HTMLElement
+    current = slideNumber
+    track.style.transform = `translateX(-${(slideNumber - 1) * 100}%)`
+    counter.textContent = String(slideNumber)
+    progressFill.style.width = (slideNumber / TOTAL_SLIDES * 100).toFixed(3) + "%"
+    subtitle.textContent = SUBTITLES[slideNumber] || ""
+    ;[...dotsContainer.children].forEach((dot, index) => (dot as HTMLElement).classList.toggle("is-active", index === slideNumber - 1))
+    prevBtn.disabled = slideNumber === 1
+    nextBtn.disabled = slideNumber === TOTAL_SLIDES
+    if (options && options.highlight) {
+      const slide = track.children[slideNumber - 1] as HTMLElement
       slide.classList.remove("is-jumped")
       void slide.offsetWidth
       slide.classList.add("is-jumped")
     }
-    if (n !== 4) stopAuto()
-    if (n !== 3) stopStream()
-    if (n !== 2) cancelTreeAnims()
-    if (n === 2 && previous !== 2) resetTreeAndAnimate()
+    if (slideNumber !== 4) stopAuto()
+    if (slideNumber !== 3) stopStream()
+    if (slideNumber !== 2) cancelTreeAnims()
+    if (slideNumber === 2 && previous !== 2) resetTreeAndAnimate()
   }
 
-  prevBtn.addEventListener("click", () => goTo(current - 1))
-  nextBtn.addEventListener("click", () => goTo(current + 1))
+  prevBtn.addEventListener("click", () => goToSlide(current - 1))
+  nextBtn.addEventListener("click", () => goToSlide(current + 1))
 
   function returnToGame(): void {
     window.history.back()
   }
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", (event) => {
     const tag = (document.activeElement && document.activeElement.tagName) || ""
     if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return
-    if (e.key === "ArrowRight") { goTo(current + 1); e.preventDefault() }
-    else if (e.key === "ArrowLeft") { goTo(current - 1); e.preventDefault() }
-    else if (e.key === "Escape") { returnToGame() }
+    if (event.key === "ArrowRight") { goToSlide(current + 1); event.preventDefault() }
+    else if (event.key === "ArrowLeft") { goToSlide(current - 1); event.preventDefault() }
+    else if (event.key === "Escape") { returnToGame() }
   })
 
   // Swipe
   ;(function bindSwipe() {
-    let startX: number | null = null, dx = 0, dragging = false
-    const SWIPE_THRESH = 0.20
-    viewport.addEventListener("pointerdown", (e) => {
-      if ((e.target as HTMLElement).closest("button, select, input, a, svg .tree-node, .ex-pslot")) return
-      startX = e.clientX; dx = 0; dragging = true
-      try { viewport.setPointerCapture(e.pointerId) } catch (_) {}
+    let swipeStartX: number | null = null, swipeDeltaX = 0, isDragging = false
+    const SWIPE_THRESHOLD = 0.20
+    viewport.addEventListener("pointerdown", (event) => {
+      if ((event.target as HTMLElement).closest("button, select, input, a, svg .tree-node, .ex-pslot")) return
+      swipeStartX = event.clientX; swipeDeltaX = 0; isDragging = true
+      try { viewport.setPointerCapture(event.pointerId) } catch (_) {}
     })
-    viewport.addEventListener("pointermove", (e) => { if (dragging && startX !== null) dx = e.clientX - startX })
+    viewport.addEventListener("pointermove", (event) => { if (isDragging && swipeStartX !== null) swipeDeltaX = event.clientX - swipeStartX })
     viewport.addEventListener("pointerup", () => {
-      if (!dragging) return
-      dragging = false
-      const ratio = dx / viewport.clientWidth
-      if (ratio < -SWIPE_THRESH) goTo(current + 1)
-      else if (ratio > SWIPE_THRESH) goTo(current - 1)
+      if (!isDragging) return
+      isDragging = false
+      const swipeRatio = swipeDeltaX / viewport.clientWidth
+      if (swipeRatio < -SWIPE_THRESHOLD) goToSlide(current + 1)
+      else if (swipeRatio > SWIPE_THRESHOLD) goToSlide(current - 1)
     })
-    viewport.addEventListener("pointercancel", () => { dragging = false })
+    viewport.addEventListener("pointercancel", () => { isDragging = false })
   })()
 
   // Click-to-jump
-  document.addEventListener("click", (e) => {
-    const j = (e.target as HTMLElement).closest("[data-jump]") as HTMLElement | null
-    if (j) {
-      const target = parseInt(j.dataset.jump!, 10)
-      goTo(target, { highlight: !!j.dataset.highlight })
+  document.addEventListener("click", (event) => {
+    const jumpEl = (event.target as HTMLElement).closest("[data-jump]") as HTMLElement | null
+    if (jumpEl) {
+      const jumpTarget = parseInt(jumpEl.dataset.jump!, 10)
+      goToSlide(jumpTarget, { highlight: !!jumpEl.dataset.highlight })
     }
   })
 
   // Intercept home navigations
-  document.addEventListener("click", (e) => {
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
-    const t = (e.target as HTMLElement).closest('a[href="/"], [data-go-home]')
-    if (!t) return
-    e.preventDefault()
+  document.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    const homeLink = (event.target as HTMLElement).closest('a[href="/"], [data-go-home]')
+    if (!homeLink) return
+    event.preventDefault()
     returnToGame()
   })
 
@@ -127,5 +127,5 @@ export function initCarousel(): void {
   })
 
   // Start on slide 1
-  goTo(1)
+  goToSlide(1)
 }

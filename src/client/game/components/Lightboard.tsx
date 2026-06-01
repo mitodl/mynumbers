@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react"
 import styled, { keyframes } from "styled-components"
 import { useGameState } from "../context/GameContext"
+import { showHomeLightboard, hideHomeLightboard } from "../home-lightboard"
 
 const LIGHTBOARD_COLORS = [
   { color: "#ff6ec7", glow: "rgba(255,110,199,0.5)" },
@@ -172,6 +173,12 @@ export function Lightboard({ equations }: LightboardProps) {
 export function HomeLightboard() {
   const { showMenu } = useGameState()
 
+  useEffect(() => {
+    if (!showMenu) return
+    showHomeLightboard()
+    return () => hideHomeLightboard()
+  }, [showMenu])
+
   if (!showMenu) return null
 
   return (
@@ -180,7 +187,7 @@ export function HomeLightboard() {
         src="/static/images/Tim_three-quarter-full-RGB.svg"
         alt="Tim"
       />
-      <Board>
+      <Board id="home-lightboard">
         <HomeSurface id="home-lb-surface" />
         <HomeCanvas id="home-lb-canvas" />
       </Board>
