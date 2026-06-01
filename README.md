@@ -21,9 +21,39 @@ A math puzzle game where you arrange numbers into equation templates to hit targ
 
 ## Local Development
 
+This is a TypeScript project with an Express server, a React client (bundled
+with webpack), and a Vite library build. You need [Node.js](https://nodejs.org/)
+(v18+).
+
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+npm install
 
-# Run the app
-uvicorn app.main:app --reload
+# Build the server and client, then start the app
+npm run build
+npm start
+```
+
+Then open http://localhost:8000/ (set `PORT` to use a different port).
+
+
+## Using ARITHMIX as a library
+
+The game and explainer can be embedded in another app. `npm run build:lib`
+produces an ESM + UMD bundle (`dist/lib`) with type declarations.
+`react`, `react-dom`, and `styled-components` are peer dependencies that the
+host app provides.
+
+React host:
+
+```tsx
+import { Arithmix, GamePage, ExplainerPage } from "numbers-puzzle-game"
+
+// Full app with built-in routing between the game and explainer:
+<Arithmix />
+
+// Or embed an individual page:
+<GamePage />
+<ExplainerPage />
+```
+
