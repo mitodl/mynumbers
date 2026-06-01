@@ -89,6 +89,7 @@ export function App() {
     startCountdown,
     handleRushReady,
     playAgain,
+    resetEquations,
     equations,
   } = useGameActions()
 
@@ -115,6 +116,13 @@ export function App() {
       hasGenerated.current = false
     }
   }, [state.mode, state.puzzle, generatePuzzle])
+
+  // Clear lightboard equations at the start of each rush game
+  useEffect(() => {
+    if (isRush && !state.rushStarted && state.puzzlesSolved === 0) {
+      resetEquations()
+    }
+  }, [isRush, state.rushStarted, state.puzzlesSolved, resetEquations])
 
   // Auto-check when all slots are filled
   useEffect(() => {

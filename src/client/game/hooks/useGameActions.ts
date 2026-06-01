@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useGameState, useGameDispatch, calculateDifficulty } from "../context/GameContext"
 import { puzzleRush, puzzleCheck, type PuzzleOut, type CheckResult } from "../generator"
 import type { BankItem, Puzzle } from "../types"
@@ -7,7 +7,7 @@ export function useGameActions() {
   const state = useGameState()
   const dispatch = useGameDispatch()
   const autoCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const equationsRef = useRef<string[]>([])
+  const [equations, setEquations] = useState<string[]>([])
 
   const generatePuzzle = useCallback(() => {
     let difficulty = 3
@@ -84,7 +84,7 @@ export function useGameActions() {
     if (result.reason === "correct") {
       if (state.mode === "rush3" || state.mode === "rush5") {
         dispatch({ type: "INCREMENT_SOLVED" })
-        equationsRef.current = [...equationsRef.current, `${displayExpr} = ${puzzle.target}`]
+        setEquations(prev => [...prev, `${displayExpr} = ${puzzle.target}`])
         dispatch({
           type: "SET_RESULT",
           result: { text: `Correct! Level ${state.puzzlesSolved + 2}`, type: "success" },
@@ -126,6 +126,10 @@ export function useGameActions() {
   const endRush = useCallback(() => {
     dispatch({ type: "END_RUSH" })
   }, [dispatch])
+
+  const resetEquations = useCallback(() => {
+    setEquations([])
+  }, [])
 
   const startCountdown = useCallback(() => {
     dispatch({ type: "SHOW_COUNTDOWN" })
@@ -169,6 +173,7 @@ export function useGameActions() {
     startCountdown,
     handleRushReady,
     playAgain,
-    equations: equationsRef.current,
+    resetEquations,
+    equations,
   }
 }
