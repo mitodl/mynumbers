@@ -1,5 +1,5 @@
 {
-  "name": "numbers-puzzle-game",
+  "name": "arythmix",
   "version": "0.2.0",
   "description": "Arithmetic puzzle game: combine given numbers to reach a target.",
   "main": "dist/server/server.js",
@@ -20,6 +20,7 @@
     "build:server": "tsc",
     "build:client": "tsc -p tsconfig.client.json && webpack --config webpack.config.js",
     "build:lib": "vite build",
+    "prepare": "vite build",
     "start": "node dist/server/server.js",
     "dev": "tsc && tsc -p tsconfig.client.json && webpack --config webpack.config.js --mode development && node --watch dist/server/server.js"
   },

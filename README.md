@@ -47,7 +47,7 @@ host app provides.
 React host:
 
 ```tsx
-import { Arithmix, GamePage, ExplainerPage } from "numbers-puzzle-game"
+import { Arithmix, GamePage, ExplainerPage } from "arythmix"
 
 // Full app with built-in routing between the game and explainer:
 <Arithmix />
