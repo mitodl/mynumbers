@@ -34,7 +34,7 @@ interface LightboardConfig {
 const measureCanvas = document.createElement("canvas")
 const measureContext = measureCanvas.getContext("2d")!
 
-const HOME_LB_POOL: LightboardItem[] = [
+const EQUATION_POOL: LightboardItem[] = [
   { text: "e<sup>iπ</sup> + 1 = 0", color: "#ff6ec7", glow: "rgba(255,110,199,0.5)" },
   { text: "π ≈ 3.14159",          color: "#00d4ff", glow: "rgba(0,212,255,0.5)"   },
   { text: "E = mc²",              color: "#ffe033", glow: "rgba(255,224,51,0.5)"  },
@@ -56,47 +56,47 @@ const HOME_LB_POOL: LightboardItem[] = [
   { text: "n! ~ (n/e)ⁿ√(2πn)",  color: "#00d4ff", glow: "rgba(0,212,255,0.5)"   },
 ]
 
-const HOME_LB_FONTS: LightboardFont[] = [
+const HANDWRITING_FONTS: LightboardFont[] = [
   { family: "'Caveat'",              weight: 600 },
   { family: "'Patrick Hand'",        weight: 400 },
   { family: "'Architects Daughter'", weight: 400 },
   { family: "'Kalam'",               weight: 700 },
   { family: "'Kalam'",               weight: 400 },
 ]
-const HOME_LB_SIZES = [17, 21, 25, 30, 36]
+const FONT_SIZE_OPTIONS = [17, 21, 25, 30, 36]
 
-function pickStyle(text: string): { family: string; weight: number; size: number; widthPct: number; heightPct: number } {
-  const font = HOME_LB_FONTS[Math.floor(Math.random() * HOME_LB_FONTS.length)]
-  const boardEl = document.getElementById("home-lightboard")
-  const boardW = boardEl ? boardEl.offsetWidth : 640
-  const boardH = boardEl ? boardEl.offsetHeight : 300
-  const scale = Math.min(1, boardW / 640)
+function pickTextStyle(text: string): { family: string; weight: number; size: number; widthPct: number; heightPct: number } {
+  const font = HANDWRITING_FONTS[Math.floor(Math.random() * HANDWRITING_FONTS.length)]
+  const boardElement = document.getElementById("home-lightboard")
+  const boardWidth = boardElement ? boardElement.offsetWidth : 640
+  const boardHeight = boardElement ? boardElement.offsetHeight : 300
+  const scale = Math.min(1, boardWidth / 640)
   const maxSize = Math.floor((text.length > 15 ? 25 : text.length > 11 ? 30 : 36) * scale)
-  const sizes = HOME_LB_SIZES.filter(s => s <= maxSize)
-  const size = sizes.length ? sizes[Math.floor(Math.random() * sizes.length)] : HOME_LB_SIZES[0]
-  const plain = text.replace(/<[^>]+>/g, "")
+  const allowedSizes = FONT_SIZE_OPTIONS.filter(size => size <= maxSize)
+  const size = allowedSizes.length ? allowedSizes[Math.floor(Math.random() * allowedSizes.length)] : FONT_SIZE_OPTIONS[0]
+  const plainText = text.replace(/<[^>]+>/g, "")
   measureContext.font = `${font.weight} ${size}px ${font.family}`
-  const widthPct = (measureContext.measureText(plain).width + 12) / boardW * 100
-  const heightPct = (size * 1.75) / boardH * 100
+  const widthPct = (measureContext.measureText(plainText).width + 12) / boardWidth * 100
+  const heightPct = (size * 1.75) / boardHeight * 100
   return { family: font.family, weight: font.weight, size, widthPct, heightPct }
 }
 
-const DOODLE_POOL = ['gear', 'sine', 'helix', 'matrix', 'atom', 'fibonacci', 'venn', 'triangle', 'star', 'numberLine', 'rocket', 'dna', 'lightbulb', 'numtiles']
-const DOODLE_PCT: Record<string, { rw: number; rh: number }> = {
-  gear:       { rw: 9,  rh: 10 },
-  sine:       { rw: 14, rh: 22 },
-  helix:      { rw: 10, rh: 22 },
-  matrix:     { rw: 17, rh: 13 },
-  atom:       { rw: 11, rh: 11 },
-  fibonacci:  { rw: 12, rh: 12 },
-  venn:       { rw: 16, rh: 10 },
-  triangle:   { rw: 10, rh: 10 },
-  star:       { rw:  7, rh:  7 },
-  numberLine: { rw: 17, rh:  6 },
-  rocket:     { rw:  7, rh: 16 },
-  dna:        { rw:  9, rh: 19 },
-  lightbulb:  { rw: 10, rh: 14 },
-  numtiles:   { rw: 17, rh: 12 },
+const DOODLE_TYPES = ['gear', 'sine', 'helix', 'matrix', 'atom', 'fibonacci', 'venn', 'triangle', 'star', 'numberLine', 'rocket', 'dna', 'lightbulb', 'numtiles']
+const DOODLE_SIZE_PCT: Record<string, { radiusWidthPct: number; radiusHeightPct: number }> = {
+  gear:       { radiusWidthPct: 9,  radiusHeightPct: 10 },
+  sine:       { radiusWidthPct: 14, radiusHeightPct: 22 },
+  helix:      { radiusWidthPct: 10, radiusHeightPct: 22 },
+  matrix:     { radiusWidthPct: 17, radiusHeightPct: 13 },
+  atom:       { radiusWidthPct: 11, radiusHeightPct: 11 },
+  fibonacci:  { radiusWidthPct: 12, radiusHeightPct: 12 },
+  venn:       { radiusWidthPct: 16, radiusHeightPct: 10 },
+  triangle:   { radiusWidthPct: 10, radiusHeightPct: 10 },
+  star:       { radiusWidthPct:  7, radiusHeightPct:  7 },
+  numberLine: { radiusWidthPct: 17, radiusHeightPct:  6 },
+  rocket:     { radiusWidthPct:  7, radiusHeightPct: 16 },
+  dna:        { radiusWidthPct:  9, radiusHeightPct: 19 },
+  lightbulb:  { radiusWidthPct: 10, radiusHeightPct: 14 },
+  numtiles:   { radiusWidthPct: 17, radiusHeightPct: 12 },
 }
 
 let animationFrameId: number | null = null
@@ -104,111 +104,111 @@ let mutationTimer: ReturnType<typeof setTimeout> | null = null
 let stars: any[] = []
 let currentStar: any = null
 let currentFirework: any = null
-let currentStartTs: number | null = null
+let animationStartTimestamp: number | null = null
 export let lightboardConfig: LightboardConfig | null = null
 
 const DOODLE_PARAM_AXES: Record<string, Record<string, string>> = {
-  gear:       { r: "h" },
-  sine:       { gw: "w", gh: "h" },
-  helix:      { gw: "w", gh: "h" },
-  matrix:     { cw: "w", ch: "h" },
-  atom:       { r: "h" },
-  fibonacci:  { r: "h" },
-  venn:       { r: "w" },
+  gear:       { radius: "h" },
+  sine:       { graphWidth: "w", graphHeight: "h" },
+  helix:      { graphWidth: "w", graphHeight: "h" },
+  matrix:     { cellWidth: "w", cellHeight: "h" },
+  atom:       { radius: "h" },
+  fibonacci:  { radius: "h" },
+  venn:       { radius: "w" },
   triangle:   { size: "h" },
-  star:       { r: "h" },
-  numberLine: { lw: "w" },
-  rocket:     { rh: "h" },
-  dna:        { gw: "w", gh: "h" },
-  lightbulb:  { r: "h" },
-  numtiles:   { tw: "w" },
+  star:       { radius: "h" },
+  numberLine: { lineLength: "w" },
+  rocket:     { rocketHeight: "h" },
+  dna:        { graphWidth: "w", graphHeight: "h" },
+  lightbulb:  { radius: "h" },
+  numtiles:   { tileWidth: "w" },
 }
 
-export function scaleDoodleParams(type: string, params: DoodleParams, wRatio: number, hRatio: number): void {
+export function scaleDoodleParams(type: string, params: DoodleParams, widthRatio: number, heightRatio: number): void {
   const axes = DOODLE_PARAM_AXES[type]
   if (!axes) return
   for (const key in axes) {
     if (typeof params[key] !== "number") continue
-    params[key] *= (axes[key] === "w" ? wRatio : hRatio)
+    params[key] *= (axes[key] === "w" ? widthRatio : heightRatio)
   }
 }
 
-function buildDoodleParams(type: string, w: number, h: number): DoodleParams {
+function buildDoodleParams(type: string, width: number, height: number): DoodleParams {
   switch (type) {
-    case 'gear':       return { r: h * (0.060 + Math.random() * 0.035) }
-    case 'sine':       return { gw: w * (0.110 + Math.random() * 0.050), gh: h * (0.24 + Math.random() * 0.10) }
-    case 'helix':      return { gw: w * (0.080 + Math.random() * 0.040), gh: h * (0.24 + Math.random() * 0.12) }
-    case 'matrix':     return { cw: w * (0.048 + Math.random() * 0.018), ch: h * (0.10 + Math.random() * 0.04) }
-    case 'atom':       return { r: h * (0.070 + Math.random() * 0.030) }
-    case 'fibonacci':  return { r: h * (0.090 + Math.random() * 0.030) }
-    case 'venn':       return { r: w * (0.055 + Math.random() * 0.020) }
-    case 'triangle':   return { size: h * (0.110 + Math.random() * 0.040) }
-    case 'star':       return { r: h * (0.055 + Math.random() * 0.025) }
-    case 'numberLine': return { lw: w * (0.140 + Math.random() * 0.070) }
-    case 'rocket':     return { rh: h * (0.130 + Math.random() * 0.040) }
-    case 'dna':        return { gw: w * (0.050 + Math.random() * 0.022), gh: h * (0.22 + Math.random() * 0.08) }
-    case 'lightbulb':  return { r: h * (0.075 + Math.random() * 0.030) }
+    case 'gear':       return { radius: height * (0.060 + Math.random() * 0.035) }
+    case 'sine':       return { graphWidth: width * (0.110 + Math.random() * 0.050), graphHeight: height * (0.24 + Math.random() * 0.10) }
+    case 'helix':      return { graphWidth: width * (0.080 + Math.random() * 0.040), graphHeight: height * (0.24 + Math.random() * 0.12) }
+    case 'matrix':     return { cellWidth: width * (0.048 + Math.random() * 0.018), cellHeight: height * (0.10 + Math.random() * 0.04) }
+    case 'atom':       return { radius: height * (0.070 + Math.random() * 0.030) }
+    case 'fibonacci':  return { radius: height * (0.090 + Math.random() * 0.030) }
+    case 'venn':       return { radius: width * (0.055 + Math.random() * 0.020) }
+    case 'triangle':   return { size: height * (0.110 + Math.random() * 0.040) }
+    case 'star':       return { radius: height * (0.055 + Math.random() * 0.025) }
+    case 'numberLine': return { lineLength: width * (0.140 + Math.random() * 0.070) }
+    case 'rocket':     return { rocketHeight: height * (0.130 + Math.random() * 0.040) }
+    case 'dna':        return { graphWidth: width * (0.050 + Math.random() * 0.022), graphHeight: height * (0.22 + Math.random() * 0.08) }
+    case 'lightbulb':  return { radius: height * (0.075 + Math.random() * 0.030) }
     case 'numtiles': {
-      const tw = w * (0.028 + Math.random() * 0.010)
+      const tileWidth = width * (0.028 + Math.random() * 0.010)
       const order = [0, 1, 2, 3, 4, 5, 6, 7, 8].sort(() => Math.random() - 0.5)
-      const ci = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(() => Math.floor(Math.random() * _TILE_COLORS.length))
-      const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5)
-      return { tw, order, ci, nums }
+      const colorIndices = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(() => Math.floor(Math.random() * TILE_COLORS.length))
+      const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9].sort(() => Math.random() - 0.5)
+      return { tileWidth, order, colorIndices, numbers }
     }
     default: return {}
   }
 }
 
-function buildConfig(w: number, h: number): LightboardConfig {
-  const types = [...DOODLE_POOL].sort(() => Math.random() - 0.5).slice(0, 4 + Math.floor(Math.random() * 2))
+function buildConfig(width: number, height: number): LightboardConfig {
+  const types = [...DOODLE_TYPES].sort(() => Math.random() - 0.5).slice(0, 4 + Math.floor(Math.random() * 2))
   const doodles: Doodle[] = []
 
   for (const type of types) {
-    const sz = DOODLE_PCT[type]
+    const size = DOODLE_SIZE_PCT[type]
     let placed = false
 
     for (let attempt = 0; attempt < 80; attempt++) {
       let pctX: number, pctY: number
       const zone = Math.random()
       if (zone < 0.55) {
-        pctX = sz.rw + Math.random() * Math.max(1, 95 - sz.rw * 2)
-        pctY = sz.rh + Math.random() * Math.max(1, 44 - sz.rh * 2)
+        pctX = size.radiusWidthPct + Math.random() * Math.max(1, 95 - size.radiusWidthPct * 2)
+        pctY = size.radiusHeightPct + Math.random() * Math.max(1, 44 - size.radiusHeightPct * 2)
       } else {
-        pctX = sz.rw + Math.random() * Math.max(1, 95 - sz.rw * 2)
-        pctY = 50 + sz.rh + Math.random() * Math.max(1, 38 - sz.rh * 2)
+        pctX = size.radiusWidthPct + Math.random() * Math.max(1, 95 - size.radiusWidthPct * 2)
+        pctY = 50 + size.radiusHeightPct + Math.random() * Math.max(1, 38 - size.radiusHeightPct * 2)
       }
 
-      const overlaps = doodles.some(d => {
-        const osz = DOODLE_PCT[d.type]
-        const dx = (pctX - d.pctCX) / (sz.rw + osz.rw)
-        const dy = (pctY - d.pctCY) / (sz.rh + osz.rh)
-        return dx * dx + dy * dy < 1
+      const overlaps = doodles.some(other => {
+        const otherSize = DOODLE_SIZE_PCT[other.type]
+        const deltaX = (pctX - other.pctCX) / (size.radiusWidthPct + otherSize.radiusWidthPct)
+        const deltaY = (pctY - other.pctCY) / (size.radiusHeightPct + otherSize.radiusHeightPct)
+        return deltaX * deltaX + deltaY * deltaY < 1
       })
 
       if (!overlaps) {
-        doodles.push({ type, cx: pctX / 100 * w, cy: pctY / 100 * h, pctCX: pctX, pctCY: pctY,
-          params: buildDoodleParams(type, w, h), showMs: 0 })
+        doodles.push({ type, cx: pctX / 100 * width, cy: pctY / 100 * height, pctCX: pctX, pctCY: pctY,
+          params: buildDoodleParams(type, width, height), showMs: 0 })
         placed = true
         break
       }
     }
 
     if (!placed) {
-      const pctX = sz.rw + Math.random() * Math.max(1, 95 - sz.rw * 2)
-      const pctY = sz.rh + Math.random() * Math.max(1, 90 - sz.rh * 2)
-      doodles.push({ type, cx: pctX / 100 * w, cy: pctY / 100 * h, pctCX: pctX, pctCY: pctY,
-        params: buildDoodleParams(type, w, h), showMs: 0 })
+      const pctX = size.radiusWidthPct + Math.random() * Math.max(1, 95 - size.radiusWidthPct * 2)
+      const pctY = size.radiusHeightPct + Math.random() * Math.max(1, 90 - size.radiusHeightPct * 2)
+      doodles.push({ type, cx: pctX / 100 * width, cy: pctY / 100 * height, pctCX: pctX, pctCY: pctY,
+        params: buildDoodleParams(type, width, height), showMs: 0 })
     }
   }
 
-  let t = 0
-  doodles.forEach(d => { d.showMs = t; t += (3 + Math.random() * 4) * 1000 })
+  let elapsedMs = 0
+  doodles.forEach(doodle => { doodle.showMs = elapsedMs; elapsedMs += (3 + Math.random() * 4) * 1000 })
   return { doodles }
 }
 
 function findRandomPositions(
   entries: { widthPct?: number; heightPct?: number }[],
-  reservedZones: { cx: number; cy: number; rw: number; rh: number }[],
+  reservedZones: { cx: number; cy: number; halfWidthPct: number; halfHeightPct: number }[],
   alreadyPlaced: { x: number; y: number; wPct?: number; hPct?: number }[] = []
 ): { x: number; y: number; wPct: number; hPct: number }[] {
   const count = entries.length
@@ -219,17 +219,17 @@ function findRandomPositions(
 
   function conflicts(x: number, y: number, wPct: number, hPct: number): boolean {
     if (x < 1 || x + wPct > 95 || y < 1 || y + hPct > 94) return true
-    for (const tx of [x, x + wPct * 0.5, x + wPct]) {
-      for (const z of reservedZones) {
-        const dx = (tx - z.cx) / z.rw, dy = (y - z.cy) / z.rh
-        if (dx * dx + dy * dy < 1) return true
+    for (const testX of [x, x + wPct * 0.5, x + wPct]) {
+      for (const zone of reservedZones) {
+        const deltaX = (testX - zone.cx) / zone.halfWidthPct, deltaY = (y - zone.cy) / zone.halfHeightPct
+        if (deltaX * deltaX + deltaY * deltaY < 1) return true
       }
     }
-    for (const p of placed) {
-      const pw = p.wPct ?? 20
-      for (const ox of [0, pw * 0.5, pw]) {
-        const dx = (x + wPct * 0.5) - (p.x + ox), dy = (y - p.y) * 1.6
-        if (dx * dx + dy * dy < MIN_DIST * MIN_DIST) return true
+    for (const placedItem of placed) {
+      const placedWidth = placedItem.wPct ?? 20
+      for (const offsetX of [0, placedWidth * 0.5, placedWidth]) {
+        const deltaX = (x + wPct * 0.5) - (placedItem.x + offsetX), deltaY = (y - placedItem.y) * 1.6
+        if (deltaX * deltaX + deltaY * deltaY < MIN_DIST * MIN_DIST) return true
       }
     }
     return false
@@ -240,11 +240,11 @@ function findRandomPositions(
     const hPct = entries[i].heightPct ?? 10
     const maxX = Math.max(2, 95 - wPct)
     const maxY = Math.max(2, 94 - hPct)
-    let pos: { x: number; y: number; wPct: number; hPct: number } | null = null
-    for (let a = 0; a < MAX_TRIES; a++) {
+    let position: { x: number; y: number; wPct: number; hPct: number } | null = null
+    for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
       let x: number, y: number
-      const r = Math.random()
-      if (r < 0.55) {
+      const zoneRoll = Math.random()
+      if (zoneRoll < 0.55) {
         x = 2 + Math.random() * Math.min(80, maxX - 2)
         y = 2 + Math.random() * Math.min(42, maxY - 2)
       } else {
@@ -253,50 +253,50 @@ function findRandomPositions(
       }
       x = Math.min(x, maxX)
       y = Math.min(y, maxY)
-      if (!conflicts(x, y, wPct, hPct)) { pos = { x, y, wPct, hPct }; break }
+      if (!conflicts(x, y, wPct, hPct)) { position = { x, y, wPct, hPct }; break }
     }
-    if (pos) { placed.push(pos); newItems.push(pos) }
+    if (position) { placed.push(position); newItems.push(position) }
   }
   return newItems
 }
 
 // ── Firework ──────────────────────────────────────────────────────────────────
-const FW_COLORS = ["#ff1423", "#ff6ec7", "#ffe033", "#00d4ff", "#c77dff", "#39ff14", "#ff9d00"]
+const FIREWORK_COLORS = ["#ff1423", "#ff6ec7", "#ffe033", "#00d4ff", "#c77dff", "#39ff14", "#ff9d00"]
 
-function createFirework(w: number, h: number): any {
-  const left = Math.random() > 0.5
-  const sx = left ? w * 0.07 : w * 0.93
-  const ex = sx + (left ? 1 : -1) * w * (0.04 + Math.random() * 0.10)
-  const ey = h * (0.10 + Math.random() * 0.28)
-  return { phase: "launch", sx, x: sx, y: h, ex, ey, start: null, launchMs: 900, explodeAt: null, particles: [] }
+function createFirework(width: number, height: number): any {
+  const launchFromLeft = Math.random() > 0.5
+  const startX = launchFromLeft ? width * 0.07 : width * 0.93
+  const endX = startX + (launchFromLeft ? 1 : -1) * width * (0.04 + Math.random() * 0.10)
+  const endY = height * (0.10 + Math.random() * 0.28)
+  return { phase: "launch", startX, x: startX, y: height, endX, endY, startTimestamp: null, launchDurationMs: 900, explodeTimestamp: null, particles: [] }
 }
 
-function updateFirework(ctx: CanvasRenderingContext2D, fw: any, ts: number): boolean {
-  if (!fw.start) fw.start = ts
-  if (fw.phase === "launch") {
-    const p = Math.min((ts - fw.start) / fw.launchMs, 1)
-    fw.x = fw.sx + (fw.ex - fw.sx) * p
-    fw.y = fw.y + (fw.ey - fw.y) * (p < 1 ? 0.08 : 1)
-    ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = "#fff"
-    ctx.shadowColor = "#fff"; ctx.shadowBlur = 8
-    ctx.beginPath(); ctx.arc(fw.x, fw.y, 2, 0, Math.PI * 2); ctx.fill(); ctx.restore()
-    if (p >= 1) {
-      fw.phase = "explode"; fw.explodeAt = ts; fw.x = fw.ex; fw.y = fw.ey
+function updateFirework(context: CanvasRenderingContext2D, firework: any, timestamp: number): boolean {
+  if (!firework.startTimestamp) firework.startTimestamp = timestamp
+  if (firework.phase === "launch") {
+    const progress = Math.min((timestamp - firework.startTimestamp) / firework.launchDurationMs, 1)
+    firework.x = firework.startX + (firework.endX - firework.startX) * progress
+    firework.y = firework.y + (firework.endY - firework.y) * (progress < 1 ? 0.08 : 1)
+    context.save(); context.globalAlpha = 0.9; context.fillStyle = "#fff"
+    context.shadowColor = "#fff"; context.shadowBlur = 8
+    context.beginPath(); context.arc(firework.x, firework.y, 2, 0, Math.PI * 2); context.fill(); context.restore()
+    if (progress >= 1) {
+      firework.phase = "explode"; firework.explodeTimestamp = timestamp; firework.x = firework.endX; firework.y = firework.endY
       for (let i = 0; i < 32; i++) {
-        const a = (i / 32) * Math.PI * 2 + (Math.random() - 0.5) * 0.4, spd = 1 + Math.random() * 2.2
-        fw.particles.push({ x: fw.x, y: fw.y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
-          color: FW_COLORS[i % FW_COLORS.length], r: 1.5 + Math.random() * 1.5 })
+        const angle = (i / 32) * Math.PI * 2 + (Math.random() - 0.5) * 0.4, speed = 1 + Math.random() * 2.2
+        firework.particles.push({ x: firework.x, y: firework.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          color: FIREWORK_COLORS[i % FIREWORK_COLORS.length], r: 1.5 + Math.random() * 1.5 })
       }
     }
   } else {
-    const p = (ts - fw.explodeAt) / 2300
-    if (p >= 1) return true
-    fw.particles.forEach((pt: any) => {
-      pt.x += pt.vx; pt.y += pt.vy; pt.vy += 0.05
-      ctx.save(); ctx.globalAlpha = 1 - p; ctx.fillStyle = pt.color
-      ctx.shadowColor = pt.color; ctx.shadowBlur = 5
-      ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r * (1 - p * 0.5), 0, Math.PI * 2)
-      ctx.fill(); ctx.restore()
+    const progress = (timestamp - firework.explodeTimestamp) / 2300
+    if (progress >= 1) return true
+    firework.particles.forEach((particle: any) => {
+      particle.x += particle.vx; particle.y += particle.vy; particle.vy += 0.05
+      context.save(); context.globalAlpha = 1 - progress; context.fillStyle = particle.color
+      context.shadowColor = particle.color; context.shadowBlur = 5
+      context.beginPath(); context.arc(particle.x, particle.y, particle.r * (1 - progress * 0.5), 0, Math.PI * 2)
+      context.fill(); context.restore()
     })
   }
   return false
@@ -304,410 +304,410 @@ function updateFirework(ctx: CanvasRenderingContext2D, fw: any, ts: number): boo
 
 // ── Doodle draw functions ─────────────────────────────────────────────────────
 
-function doodleGear(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, ts: number, fade: number) {
-  const teeth = 8, inner = r * 0.68, tooth = r * 0.38, hole = r * 0.28, angle = ts * 0.0004
-  ctx.save()
-  ctx.translate(cx, cy); ctx.rotate(angle)
-  ctx.globalAlpha = 0.45 * fade; ctx.strokeStyle = "#c77dff"
-  ctx.fillStyle = "rgba(199,125,255,0.12)"; ctx.lineWidth = 1.5
-  ctx.shadowColor = "#c77dff"; ctx.shadowBlur = 7
-  ctx.beginPath()
+function doodleGear(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, timestamp: number, fade: number) {
+  const teeth = 8, inner = radius * 0.68, tooth = radius * 0.38, hole = radius * 0.28, angle = timestamp * 0.0004
+  context.save()
+  context.translate(centerX, centerY); context.rotate(angle)
+  context.globalAlpha = 0.45 * fade; context.strokeStyle = "#c77dff"
+  context.fillStyle = "rgba(199,125,255,0.12)"; context.lineWidth = 1.5
+  context.shadowColor = "#c77dff"; context.shadowBlur = 7
+  context.beginPath()
   for (let i = 0; i < teeth; i++) {
     const a1 = (i / teeth) * Math.PI * 2, a2 = ((i + 0.4) / teeth) * Math.PI * 2,
       a3 = ((i + 0.6) / teeth) * Math.PI * 2, a4 = ((i + 1) / teeth) * Math.PI * 2
-    ctx.lineTo(Math.cos(a1) * inner, Math.sin(a1) * inner)
-    ctx.lineTo(Math.cos(a2) * (inner + tooth), Math.sin(a2) * (inner + tooth))
-    ctx.lineTo(Math.cos(a3) * (inner + tooth), Math.sin(a3) * (inner + tooth))
-    ctx.lineTo(Math.cos(a4) * inner, Math.sin(a4) * inner)
+    context.lineTo(Math.cos(a1) * inner, Math.sin(a1) * inner)
+    context.lineTo(Math.cos(a2) * (inner + tooth), Math.sin(a2) * (inner + tooth))
+    context.lineTo(Math.cos(a3) * (inner + tooth), Math.sin(a3) * (inner + tooth))
+    context.lineTo(Math.cos(a4) * inner, Math.sin(a4) * inner)
   }
-  ctx.closePath(); ctx.fill(); ctx.stroke()
-  ctx.beginPath(); ctx.arc(0, 0, hole, 0, Math.PI * 2)
-  ctx.globalAlpha = 0.7 * fade; ctx.stroke()
-  ctx.restore()
+  context.closePath(); context.fill(); context.stroke()
+  context.beginPath(); context.arc(0, 0, hole, 0, Math.PI * 2)
+  context.globalAlpha = 0.7 * fade; context.stroke()
+  context.restore()
 }
 
-function doodleSineGraph(ctx: CanvasRenderingContext2D, cx: number, cy: number, gw: number, gh: number, ts: number, fade: number) {
-  ctx.save()
-  ctx.globalAlpha = 0.55 * fade; ctx.strokeStyle = "#39ff14"
-  ctx.lineWidth = 1.3; ctx.shadowColor = "#39ff14"; ctx.shadowBlur = 5
-  ctx.beginPath(); ctx.moveTo(cx - gw / 2, cy); ctx.lineTo(cx + gw / 2, cy); ctx.stroke()
-  ctx.beginPath(); ctx.moveTo(cx, cy - gh / 2); ctx.lineTo(cx, cy + gh / 2); ctx.stroke()
-  const ar = 5; ctx.beginPath()
-  ctx.moveTo(cx + gw / 2, cy); ctx.lineTo(cx + gw / 2 - ar, cy - 3)
-  ctx.moveTo(cx + gw / 2, cy); ctx.lineTo(cx + gw / 2 - ar, cy + 3)
-  ctx.moveTo(cx, cy - gh / 2); ctx.lineTo(cx - 3, cy - gh / 2 + ar)
-  ctx.moveTo(cx, cy - gh / 2); ctx.lineTo(cx + 3, cy - gh / 2 + ar); ctx.stroke()
-  ctx.globalAlpha = 0.9 * fade; ctx.strokeStyle = "#ff6ec7"
-  ctx.lineWidth = 2; ctx.shadowColor = "#ff6ec7"; ctx.shadowBlur = 7
-  ctx.beginPath()
+function doodleSineGraph(context: CanvasRenderingContext2D, centerX: number, centerY: number, graphWidth: number, graphHeight: number, timestamp: number, fade: number) {
+  context.save()
+  context.globalAlpha = 0.55 * fade; context.strokeStyle = "#39ff14"
+  context.lineWidth = 1.3; context.shadowColor = "#39ff14"; context.shadowBlur = 5
+  context.beginPath(); context.moveTo(centerX - graphWidth / 2, centerY); context.lineTo(centerX + graphWidth / 2, centerY); context.stroke()
+  context.beginPath(); context.moveTo(centerX, centerY - graphHeight / 2); context.lineTo(centerX, centerY + graphHeight / 2); context.stroke()
+  const arrowSize = 5; context.beginPath()
+  context.moveTo(centerX + graphWidth / 2, centerY); context.lineTo(centerX + graphWidth / 2 - arrowSize, centerY - 3)
+  context.moveTo(centerX + graphWidth / 2, centerY); context.lineTo(centerX + graphWidth / 2 - arrowSize, centerY + 3)
+  context.moveTo(centerX, centerY - graphHeight / 2); context.lineTo(centerX - 3, centerY - graphHeight / 2 + arrowSize)
+  context.moveTo(centerX, centerY - graphHeight / 2); context.lineTo(centerX + 3, centerY - graphHeight / 2 + arrowSize); context.stroke()
+  context.globalAlpha = 0.9 * fade; context.strokeStyle = "#ff6ec7"
+  context.lineWidth = 2; context.shadowColor = "#ff6ec7"; context.shadowBlur = 7
+  context.beginPath()
   for (let i = 0; i <= 80; i++) {
-    const t = i / 80, x = cx - gw / 2 + 4 + t * (gw - 8), y = cy - (gh / 2 - 7) * Math.sin(t * Math.PI * 2 + ts * 0.001)
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+    const t = i / 80, x = centerX - graphWidth / 2 + 4 + t * (graphWidth - 8), y = centerY - (graphHeight / 2 - 7) * Math.sin(t * Math.PI * 2 + timestamp * 0.001)
+    i === 0 ? context.moveTo(x, y) : context.lineTo(x, y)
   }
-  ctx.stroke()
-  ctx.globalAlpha = 0.35 * fade; ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 1; ctx.shadowBlur = 0
-  ;[0.25, 0.5, 0.75].forEach(f => {
-    const xp = cx - gw / 2 + f * gw
-    ctx.beginPath(); ctx.moveTo(xp, cy - 3); ctx.lineTo(xp, cy + 3); ctx.stroke()
+  context.stroke()
+  context.globalAlpha = 0.35 * fade; context.strokeStyle = "#39ff14"; context.lineWidth = 1; context.shadowBlur = 0
+  ;[0.25, 0.5, 0.75].forEach(fraction => {
+    const tickX = centerX - graphWidth / 2 + fraction * graphWidth
+    context.beginPath(); context.moveTo(tickX, centerY - 3); context.lineTo(tickX, centerY + 3); context.stroke()
   })
-  ctx.restore()
+  context.restore()
 }
 
-function doodleHelix(ctx: CanvasRenderingContext2D, cx: number, cy: number, gw: number, gh: number, ts: number, fade: number) {
-  const turns = 3.5, top = cy - gh / 2, totalT = turns * Math.PI * 2
-  const segs = turns * 36 | 0
-  const animOff = ts * 0.00025
-  ctx.save()
-  ctx.globalAlpha = 0.35 * fade; ctx.strokeStyle = "#00d4ff"
-  ctx.lineWidth = 1; ctx.shadowColor = "#00d4ff"; ctx.shadowBlur = 3
-  ctx.beginPath(); ctx.moveTo(cx, top - 4); ctx.lineTo(cx, top + gh + 4); ctx.stroke()
-  ctx.strokeStyle = "#00d4ff"; ctx.shadowColor = "#00d4ff"
-  for (let i = 0; i < segs; i++) {
-    const t1 = (i / segs) * totalT, t2 = ((i + 1) / segs) * totalT
-    const cos1 = Math.cos(t1 + animOff), cos2 = Math.cos(t2 + animOff)
+function doodleHelix(context: CanvasRenderingContext2D, centerX: number, centerY: number, graphWidth: number, graphHeight: number, timestamp: number, fade: number) {
+  const turns = 3.5, top = centerY - graphHeight / 2, totalAngle = turns * Math.PI * 2
+  const segments = turns * 36 | 0
+  const animationOffset = timestamp * 0.00025
+  context.save()
+  context.globalAlpha = 0.35 * fade; context.strokeStyle = "#00d4ff"
+  context.lineWidth = 1; context.shadowColor = "#00d4ff"; context.shadowBlur = 3
+  context.beginPath(); context.moveTo(centerX, top - 4); context.lineTo(centerX, top + graphHeight + 4); context.stroke()
+  context.strokeStyle = "#00d4ff"; context.shadowColor = "#00d4ff"
+  for (let i = 0; i < segments; i++) {
+    const angle1 = (i / segments) * totalAngle, angle2 = ((i + 1) / segments) * totalAngle
+    const cos1 = Math.cos(angle1 + animationOffset), cos2 = Math.cos(angle2 + animationOffset)
     const depth = ((cos1 + cos2) * 0.5 + 1) * 0.5
-    ctx.globalAlpha = (0.15 + depth * 0.75) * fade
-    ctx.lineWidth = 0.8 + depth * 1.5
-    ctx.shadowBlur = 2 + depth * 7
-    ctx.setLineDash(depth < 0.3 ? [2, 3] : [])
-    ctx.beginPath()
-    ctx.moveTo(cx + (gw / 2) * cos1, top + (t1 / totalT) * gh)
-    ctx.lineTo(cx + (gw / 2) * cos2, top + (t2 / totalT) * gh)
-    ctx.stroke()
+    context.globalAlpha = (0.15 + depth * 0.75) * fade
+    context.lineWidth = 0.8 + depth * 1.5
+    context.shadowBlur = 2 + depth * 7
+    context.setLineDash(depth < 0.3 ? [2, 3] : [])
+    context.beginPath()
+    context.moveTo(centerX + (graphWidth / 2) * cos1, top + (angle1 / totalAngle) * graphHeight)
+    context.lineTo(centerX + (graphWidth / 2) * cos2, top + (angle2 / totalAngle) * graphHeight)
+    context.stroke()
   }
-  ctx.setLineDash([])
-  ctx.restore()
+  context.setLineDash([])
+  context.restore()
 }
 
-function doodleMatrix(ctx: CanvasRenderingContext2D, cx: number, cy: number, cw: number, ch: number, fade: number) {
-  const vals = [[2, -1, 0], [-1, 2, -1], [0, -1, 2]]
-  const mw = cw * 3, mh = ch * 3, left = cx - mw / 2, top = cy - mh / 2
-  ctx.save()
-  ctx.globalAlpha = 0.78 * fade; ctx.fillStyle = "#c77dff"
-  ctx.shadowColor = "#c77dff"; ctx.shadowBlur = 8
-  ctx.font = `600 ${Math.round(ch * 0.72)}px 'Caveat', cursive`
-  ctx.textAlign = "center"; ctx.textBaseline = "middle"
-  vals.forEach((row, r) => row.forEach((v, c) =>
-    ctx.fillText(String(v), left + c * cw + cw / 2, top + r * ch + ch / 2)
+function doodleMatrix(context: CanvasRenderingContext2D, centerX: number, centerY: number, cellWidth: number, cellHeight: number, fade: number) {
+  const values = [[2, -1, 0], [-1, 2, -1], [0, -1, 2]]
+  const matrixWidth = cellWidth * 3, matrixHeight = cellHeight * 3, left = centerX - matrixWidth / 2, top = centerY - matrixHeight / 2
+  context.save()
+  context.globalAlpha = 0.78 * fade; context.fillStyle = "#c77dff"
+  context.shadowColor = "#c77dff"; context.shadowBlur = 8
+  context.font = `600 ${Math.round(cellHeight * 0.72)}px 'Caveat', cursive`
+  context.textAlign = "center"; context.textBaseline = "middle"
+  values.forEach((row, rowIndex) => row.forEach((value, columnIndex) =>
+    context.fillText(String(value), left + columnIndex * cellWidth + cellWidth / 2, top + rowIndex * cellHeight + cellHeight / 2)
   ))
-  ctx.strokeStyle = "#c77dff"; ctx.lineWidth = 2; ctx.shadowBlur = 6
-  const bw = 7, pad = 4
-  ;[[left - pad, left - pad + bw], [left + mw + pad - bw, left + mw + pad]].forEach(([x0, x1]) => {
-    const isLeft = x1 < cx
-    ctx.beginPath()
-    ctx.moveTo(isLeft ? x1 : x0, top - pad); ctx.lineTo(isLeft ? x0 : x1, top - pad)
-    ctx.lineTo(isLeft ? x0 : x1, top + mh + pad); ctx.lineTo(isLeft ? x1 : x0, top + mh + pad)
-    ctx.stroke()
+  context.strokeStyle = "#c77dff"; context.lineWidth = 2; context.shadowBlur = 6
+  const bracketWidth = 7, pad = 4
+  ;[[left - pad, left - pad + bracketWidth], [left + matrixWidth + pad - bracketWidth, left + matrixWidth + pad]].forEach(([x0, x1]) => {
+    const isLeft = x1 < centerX
+    context.beginPath()
+    context.moveTo(isLeft ? x1 : x0, top - pad); context.lineTo(isLeft ? x0 : x1, top - pad)
+    context.lineTo(isLeft ? x0 : x1, top + matrixHeight + pad); context.lineTo(isLeft ? x1 : x0, top + matrixHeight + pad)
+    context.stroke()
   })
-  ctx.restore()
+  context.restore()
 }
 
-function doodleAtom(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, ts: number, fade: number) {
-  ctx.save()
-  ctx.globalAlpha = 0.85 * fade; ctx.fillStyle = "#ffe033"
-  ctx.shadowColor = "#ffe033"; ctx.shadowBlur = 12
-  ctx.beginPath(); ctx.arc(cx, cy, r * 0.16, 0, Math.PI * 2); ctx.fill()
-  ;[0, Math.PI / 3, -Math.PI / 3].forEach((tilt, idx) => {
-    ctx.save()
-    ctx.translate(cx, cy); ctx.rotate(tilt)
-    ctx.globalAlpha = 0.30 * fade; ctx.strokeStyle = "#ffe033"
-    ctx.lineWidth = 1; ctx.shadowColor = "#ffe033"; ctx.shadowBlur = 3
-    ctx.beginPath(); ctx.ellipse(0, 0, r, r * 0.32, 0, 0, Math.PI * 2); ctx.stroke()
-    const ea = ts * 0.0015 + idx * (Math.PI * 2 / 3)
-    ctx.globalAlpha = 0.9 * fade; ctx.fillStyle = "#ff6ec7"
-    ctx.shadowColor = "#ff6ec7"; ctx.shadowBlur = 8
-    ctx.beginPath(); ctx.arc(r * Math.cos(ea), r * 0.32 * Math.sin(ea), r * 0.09, 0, Math.PI * 2); ctx.fill()
-    ctx.restore()
+function doodleAtom(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, timestamp: number, fade: number) {
+  context.save()
+  context.globalAlpha = 0.85 * fade; context.fillStyle = "#ffe033"
+  context.shadowColor = "#ffe033"; context.shadowBlur = 12
+  context.beginPath(); context.arc(centerX, centerY, radius * 0.16, 0, Math.PI * 2); context.fill()
+  ;[0, Math.PI / 3, -Math.PI / 3].forEach((tilt, orbitIndex) => {
+    context.save()
+    context.translate(centerX, centerY); context.rotate(tilt)
+    context.globalAlpha = 0.30 * fade; context.strokeStyle = "#ffe033"
+    context.lineWidth = 1; context.shadowColor = "#ffe033"; context.shadowBlur = 3
+    context.beginPath(); context.ellipse(0, 0, radius, radius * 0.32, 0, 0, Math.PI * 2); context.stroke()
+    const electronAngle = timestamp * 0.0015 + orbitIndex * (Math.PI * 2 / 3)
+    context.globalAlpha = 0.9 * fade; context.fillStyle = "#ff6ec7"
+    context.shadowColor = "#ff6ec7"; context.shadowBlur = 8
+    context.beginPath(); context.arc(radius * Math.cos(electronAngle), radius * 0.32 * Math.sin(electronAngle), radius * 0.09, 0, Math.PI * 2); context.fill()
+    context.restore()
   })
-  ctx.restore()
+  context.restore()
 }
 
-function doodleFibonacci(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, fade: number) {
-  ctx.save()
-  ctx.globalAlpha = 0.65 * fade; ctx.strokeStyle = "#ff9d00"
-  ctx.lineWidth = 1.5; ctx.shadowColor = "#ff9d00"; ctx.shadowBlur = 6
-  ctx.beginPath()
-  const b = 0.25, a = r * 0.05
+function doodleFibonacci(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, fade: number) {
+  context.save()
+  context.globalAlpha = 0.65 * fade; context.strokeStyle = "#ff9d00"
+  context.lineWidth = 1.5; context.shadowColor = "#ff9d00"; context.shadowBlur = 6
+  context.beginPath()
+  const growthRate = 0.25, baseRadius = radius * 0.05
   for (let i = 0; i <= 320; i++) {
-    const theta = (i / 320) * Math.PI * 4, rad = a * Math.exp(b * theta)
-    if (rad > r) break
-    i === 0 ? ctx.moveTo(cx + rad * Math.cos(theta), cy + rad * Math.sin(theta))
-      : ctx.lineTo(cx + rad * Math.cos(theta), cy + rad * Math.sin(theta))
+    const theta = (i / 320) * Math.PI * 4, spiralRadius = baseRadius * Math.exp(growthRate * theta)
+    if (spiralRadius > radius) break
+    i === 0 ? context.moveTo(centerX + spiralRadius * Math.cos(theta), centerY + spiralRadius * Math.sin(theta))
+      : context.lineTo(centerX + spiralRadius * Math.cos(theta), centerY + spiralRadius * Math.sin(theta))
   }
-  ctx.stroke()
-  ctx.restore()
+  context.stroke()
+  context.restore()
 }
 
-function doodleVenn(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, fade: number) {
-  ctx.save()
-  const off = r * 0.55, color = "#ff6ec7"
-  ctx.globalAlpha = 0.18 * fade; ctx.fillStyle = color
-  ctx.beginPath(); ctx.arc(cx - off * 0.5, cy, r, 0, Math.PI * 2); ctx.fill()
-  ctx.beginPath(); ctx.arc(cx + off * 0.5, cy, r, 0, Math.PI * 2); ctx.fill()
-  ctx.globalAlpha = 0.55 * fade; ctx.strokeStyle = color
-  ctx.lineWidth = 1.5; ctx.shadowColor = color; ctx.shadowBlur = 6
-  ctx.beginPath(); ctx.arc(cx - off * 0.5, cy, r, 0, Math.PI * 2); ctx.stroke()
-  ctx.beginPath(); ctx.arc(cx + off * 0.5, cy, r, 0, Math.PI * 2); ctx.stroke()
-  ctx.restore()
+function doodleVenn(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, fade: number) {
+  context.save()
+  const offset = radius * 0.55, color = "#ff6ec7"
+  context.globalAlpha = 0.18 * fade; context.fillStyle = color
+  context.beginPath(); context.arc(centerX - offset * 0.5, centerY, radius, 0, Math.PI * 2); context.fill()
+  context.beginPath(); context.arc(centerX + offset * 0.5, centerY, radius, 0, Math.PI * 2); context.fill()
+  context.globalAlpha = 0.55 * fade; context.strokeStyle = color
+  context.lineWidth = 1.5; context.shadowColor = color; context.shadowBlur = 6
+  context.beginPath(); context.arc(centerX - offset * 0.5, centerY, radius, 0, Math.PI * 2); context.stroke()
+  context.beginPath(); context.arc(centerX + offset * 0.5, centerY, radius, 0, Math.PI * 2); context.stroke()
+  context.restore()
 }
 
-function doodleTriangle(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, fade: number) {
-  ctx.save()
-  const h = size * 0.5, color = "#ffe033"
-  const pts: [number, number][] = [[cx - h, cy + h], [cx + h, cy + h], [cx - h, cy - h]]
-  ctx.globalAlpha = 0.7 * fade; ctx.strokeStyle = color
-  ctx.lineWidth = 1.8; ctx.shadowColor = color; ctx.shadowBlur = 7
-  ctx.beginPath(); ctx.moveTo(...pts[0]); ctx.lineTo(...pts[1]); ctx.lineTo(...pts[2]); ctx.closePath(); ctx.stroke()
-  const sq = size * 0.12, [bx, by] = pts[0]
-  ctx.globalAlpha = 0.5 * fade; ctx.lineWidth = 1.2; ctx.shadowBlur = 4
-  ctx.beginPath(); ctx.moveTo(bx + sq, by); ctx.lineTo(bx + sq, by - sq); ctx.lineTo(bx, by - sq); ctx.stroke()
-  ctx.globalAlpha = 0.45 * fade; ctx.lineWidth = 1; ctx.shadowBlur = 3
-  ctx.beginPath(); ctx.arc(pts[1][0], pts[1][1], size * 0.18, Math.PI, Math.PI + Math.PI / 4); ctx.stroke()
-  ctx.restore()
+function doodleTriangle(context: CanvasRenderingContext2D, centerX: number, centerY: number, size: number, fade: number) {
+  context.save()
+  const half = size * 0.5, color = "#ffe033"
+  const points: [number, number][] = [[centerX - half, centerY + half], [centerX + half, centerY + half], [centerX - half, centerY - half]]
+  context.globalAlpha = 0.7 * fade; context.strokeStyle = color
+  context.lineWidth = 1.8; context.shadowColor = color; context.shadowBlur = 7
+  context.beginPath(); context.moveTo(...points[0]); context.lineTo(...points[1]); context.lineTo(...points[2]); context.closePath(); context.stroke()
+  const markSize = size * 0.12, [baseX, baseY] = points[0]
+  context.globalAlpha = 0.5 * fade; context.lineWidth = 1.2; context.shadowBlur = 4
+  context.beginPath(); context.moveTo(baseX + markSize, baseY); context.lineTo(baseX + markSize, baseY - markSize); context.lineTo(baseX, baseY - markSize); context.stroke()
+  context.globalAlpha = 0.45 * fade; context.lineWidth = 1; context.shadowBlur = 3
+  context.beginPath(); context.arc(points[1][0], points[1][1], size * 0.18, Math.PI, Math.PI + Math.PI / 4); context.stroke()
+  context.restore()
 }
 
-function doodleStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, fade: number) {
-  ctx.save()
-  ctx.globalAlpha = 0.55 * fade; ctx.strokeStyle = "#ffe033"
-  ctx.lineWidth = 1.5; ctx.shadowColor = "#ffe033"; ctx.shadowBlur = 8
-  ctx.fillStyle = "rgba(255,224,51,0.08)"
-  const inner = r * 0.38
-  ctx.beginPath()
+function doodleStar(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, fade: number) {
+  context.save()
+  context.globalAlpha = 0.55 * fade; context.strokeStyle = "#ffe033"
+  context.lineWidth = 1.5; context.shadowColor = "#ffe033"; context.shadowBlur = 8
+  context.fillStyle = "rgba(255,224,51,0.08)"
+  const inner = radius * 0.38
+  context.beginPath()
   for (let i = 0; i < 10; i++) {
-    const a = (i / 10) * Math.PI * 2 - Math.PI / 2, rad = i % 2 === 0 ? r : inner
-    i === 0 ? ctx.moveTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a))
-      : ctx.lineTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a))
+    const angle = (i / 10) * Math.PI * 2 - Math.PI / 2, pointRadius = i % 2 === 0 ? radius : inner
+    i === 0 ? context.moveTo(centerX + pointRadius * Math.cos(angle), centerY + pointRadius * Math.sin(angle))
+      : context.lineTo(centerX + pointRadius * Math.cos(angle), centerY + pointRadius * Math.sin(angle))
   }
-  ctx.closePath(); ctx.fill(); ctx.stroke()
-  ctx.restore()
+  context.closePath(); context.fill(); context.stroke()
+  context.restore()
 }
 
-function doodleNumberLine(ctx: CanvasRenderingContext2D, cx: number, cy: number, lw: number, fade: number) {
-  ctx.save()
+function doodleNumberLine(context: CanvasRenderingContext2D, centerX: number, centerY: number, lineLength: number, fade: number) {
+  context.save()
   const color = "#c77dff"
-  ctx.globalAlpha = 0.6 * fade; ctx.strokeStyle = color
-  ctx.lineWidth = 1.5; ctx.shadowColor = color; ctx.shadowBlur = 5
-  ctx.beginPath(); ctx.moveTo(cx - lw / 2, cy); ctx.lineTo(cx + lw / 2, cy); ctx.stroke()
-  const ar = 5; ctx.beginPath()
-  ctx.moveTo(cx + lw / 2, cy); ctx.lineTo(cx + lw / 2 - ar, cy - 3)
-  ctx.moveTo(cx + lw / 2, cy); ctx.lineTo(cx + lw / 2 - ar, cy + 3)
-  ctx.moveTo(cx - lw / 2, cy); ctx.lineTo(cx - lw / 2 + ar, cy - 3)
-  ctx.moveTo(cx - lw / 2, cy); ctx.lineTo(cx - lw / 2 + ar, cy + 3)
-  ctx.stroke()
-  ctx.globalAlpha = 0.5 * fade; ctx.lineWidth = 1; ctx.shadowBlur = 3
-  ctx.fillStyle = color; ctx.font = `600 10px 'Caveat', cursive`
-  ctx.textAlign = "center"; ctx.textBaseline = "top"
-  for (let v = -2; v <= 2; v++) {
-    const x = cx + v * (lw / 4)
-    ctx.beginPath(); ctx.moveTo(x, cy - (v === 0 ? 7 : 5)); ctx.lineTo(x, cy + (v === 0 ? 7 : 5)); ctx.stroke()
-    ctx.fillText(String(v), x, cy + 8)
+  context.globalAlpha = 0.6 * fade; context.strokeStyle = color
+  context.lineWidth = 1.5; context.shadowColor = color; context.shadowBlur = 5
+  context.beginPath(); context.moveTo(centerX - lineLength / 2, centerY); context.lineTo(centerX + lineLength / 2, centerY); context.stroke()
+  const arrowSize = 5; context.beginPath()
+  context.moveTo(centerX + lineLength / 2, centerY); context.lineTo(centerX + lineLength / 2 - arrowSize, centerY - 3)
+  context.moveTo(centerX + lineLength / 2, centerY); context.lineTo(centerX + lineLength / 2 - arrowSize, centerY + 3)
+  context.moveTo(centerX - lineLength / 2, centerY); context.lineTo(centerX - lineLength / 2 + arrowSize, centerY - 3)
+  context.moveTo(centerX - lineLength / 2, centerY); context.lineTo(centerX - lineLength / 2 + arrowSize, centerY + 3)
+  context.stroke()
+  context.globalAlpha = 0.5 * fade; context.lineWidth = 1; context.shadowBlur = 3
+  context.fillStyle = color; context.font = `600 10px 'Caveat', cursive`
+  context.textAlign = "center"; context.textBaseline = "top"
+  for (let value = -2; value <= 2; value++) {
+    const x = centerX + value * (lineLength / 4)
+    context.beginPath(); context.moveTo(x, centerY - (value === 0 ? 7 : 5)); context.lineTo(x, centerY + (value === 0 ? 7 : 5)); context.stroke()
+    context.fillText(String(value), x, centerY + 8)
   }
-  ctx.restore()
+  context.restore()
 }
 
-function doodleRocket(ctx: CanvasRenderingContext2D, cx: number, cy: number, rh: number, ts: number, fade: number) {
-  const bw = rh * 0.32
-  const bodyTop = cy - rh * 0.46
-  const bodyBot = cy + rh * 0.18
-  const noseH = rh * 0.38
-  const finH = rh * 0.26
-  const finW = bw * 1.6
-  ctx.save()
+function doodleRocket(context: CanvasRenderingContext2D, centerX: number, centerY: number, rocketHeight: number, timestamp: number, fade: number) {
+  const bodyWidth = rocketHeight * 0.32
+  const bodyTop = centerY - rocketHeight * 0.46
+  const bodyBottom = centerY + rocketHeight * 0.18
+  const noseHeight = rocketHeight * 0.38
+  const finHeight = rocketHeight * 0.26
+  const finWidth = bodyWidth * 1.6
+  context.save()
 
-  ctx.globalAlpha = 0.55 * fade
-  ctx.strokeStyle = "#FF7043"; ctx.fillStyle = "rgba(255,112,67,0.18)"
-  ctx.lineWidth = 1.3; ctx.shadowColor = "#FF7043"; ctx.shadowBlur = 6
-  ctx.beginPath()
-  ctx.moveTo(cx - bw, bodyBot - finH)
-  ctx.lineTo(cx - bw - finW, bodyBot + rh * 0.10)
-  ctx.lineTo(cx - bw, bodyBot)
-  ctx.closePath(); ctx.fill(); ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(cx + bw, bodyBot - finH)
-  ctx.lineTo(cx + bw + finW, bodyBot + rh * 0.10)
-  ctx.lineTo(cx + bw, bodyBot)
-  ctx.closePath(); ctx.fill(); ctx.stroke()
+  context.globalAlpha = 0.55 * fade
+  context.strokeStyle = "#FF7043"; context.fillStyle = "rgba(255,112,67,0.18)"
+  context.lineWidth = 1.3; context.shadowColor = "#FF7043"; context.shadowBlur = 6
+  context.beginPath()
+  context.moveTo(centerX - bodyWidth, bodyBottom - finHeight)
+  context.lineTo(centerX - bodyWidth - finWidth, bodyBottom + rocketHeight * 0.10)
+  context.lineTo(centerX - bodyWidth, bodyBottom)
+  context.closePath(); context.fill(); context.stroke()
+  context.beginPath()
+  context.moveTo(centerX + bodyWidth, bodyBottom - finHeight)
+  context.lineTo(centerX + bodyWidth + finWidth, bodyBottom + rocketHeight * 0.10)
+  context.lineTo(centerX + bodyWidth, bodyBottom)
+  context.closePath(); context.fill(); context.stroke()
 
-  ctx.globalAlpha = 0.50 * fade
-  ctx.fillStyle = "rgba(255,112,67,0.15)"; ctx.strokeStyle = "#FF7043"
-  ctx.lineWidth = 1.5; ctx.shadowBlur = 8
-  ctx.beginPath()
-  ctx.moveTo(cx - bw, bodyBot)
-  ctx.lineTo(cx - bw, bodyTop)
-  ctx.quadraticCurveTo(cx - bw, bodyTop - noseH * 0.4, cx, bodyTop - noseH)
-  ctx.quadraticCurveTo(cx + bw, bodyTop - noseH * 0.4, cx + bw, bodyTop)
-  ctx.lineTo(cx + bw, bodyBot)
-  ctx.closePath(); ctx.fill(); ctx.stroke()
+  context.globalAlpha = 0.50 * fade
+  context.fillStyle = "rgba(255,112,67,0.15)"; context.strokeStyle = "#FF7043"
+  context.lineWidth = 1.5; context.shadowBlur = 8
+  context.beginPath()
+  context.moveTo(centerX - bodyWidth, bodyBottom)
+  context.lineTo(centerX - bodyWidth, bodyTop)
+  context.quadraticCurveTo(centerX - bodyWidth, bodyTop - noseHeight * 0.4, centerX, bodyTop - noseHeight)
+  context.quadraticCurveTo(centerX + bodyWidth, bodyTop - noseHeight * 0.4, centerX + bodyWidth, bodyTop)
+  context.lineTo(centerX + bodyWidth, bodyBottom)
+  context.closePath(); context.fill(); context.stroke()
 
-  ctx.globalAlpha = 0.70 * fade
-  ctx.strokeStyle = "#FFD740"; ctx.fillStyle = "rgba(255,215,64,0.18)"
-  ctx.lineWidth = 1.2; ctx.shadowColor = "#FFD740"; ctx.shadowBlur = 7
-  ctx.beginPath(); ctx.arc(cx, cy - rh * 0.08, bw * 0.55, 0, Math.PI * 2)
-  ctx.fill(); ctx.stroke()
+  context.globalAlpha = 0.70 * fade
+  context.strokeStyle = "#FFD740"; context.fillStyle = "rgba(255,215,64,0.18)"
+  context.lineWidth = 1.2; context.shadowColor = "#FFD740"; context.shadowBlur = 7
+  context.beginPath(); context.arc(centerX, centerY - rocketHeight * 0.08, bodyWidth * 0.55, 0, Math.PI * 2)
+  context.fill(); context.stroke()
 
-  const flicker = 0.85 + 0.15 * Math.sin(ts * 0.014)
-  const flicker2 = 0.72 + 0.28 * Math.sin(ts * 0.018 + 1.2)
-  const fh = rh * 0.32 * flicker
-  const fw = bw * 0.75
-  ctx.globalAlpha = 0.80 * fade
-  ctx.strokeStyle = "#FF7043"; ctx.lineWidth = 1.4
-  ctx.shadowColor = "#FF7043"; ctx.shadowBlur = 8
-  ctx.lineCap = "round"
-  ctx.beginPath()
-  ctx.moveTo(cx - fw, bodyBot)
-  ctx.quadraticCurveTo(cx - fw * 0.3, bodyBot + fh * 0.5, cx, bodyBot + fh)
-  ctx.quadraticCurveTo(cx + fw * 0.3, bodyBot + fh * 0.5, cx + fw, bodyBot)
-  ctx.stroke()
-  ctx.globalAlpha = 0.90 * fade
-  ctx.strokeStyle = "#FFD740"; ctx.lineWidth = 1.1
-  ctx.shadowColor = "#FFD740"; ctx.shadowBlur = 7
-  ctx.beginPath()
-  ctx.moveTo(cx - fw * 0.38, bodyBot)
-  ctx.quadraticCurveTo(cx, bodyBot + fh * flicker2, cx + fw * 0.38, bodyBot)
-  ctx.stroke()
-  ctx.globalAlpha = 0.60 * fade
-  ctx.strokeStyle = "#FFD740"; ctx.lineWidth = 0.8; ctx.shadowBlur = 5
-  ctx.beginPath()
-  ctx.moveTo(cx, bodyBot)
-  ctx.lineTo(cx, bodyBot + fh * 1.12 * flicker)
-  ctx.stroke()
+  const flicker = 0.85 + 0.15 * Math.sin(timestamp * 0.014)
+  const innerFlicker = 0.72 + 0.28 * Math.sin(timestamp * 0.018 + 1.2)
+  const flameHeight = rocketHeight * 0.32 * flicker
+  const flameWidth = bodyWidth * 0.75
+  context.globalAlpha = 0.80 * fade
+  context.strokeStyle = "#FF7043"; context.lineWidth = 1.4
+  context.shadowColor = "#FF7043"; context.shadowBlur = 8
+  context.lineCap = "round"
+  context.beginPath()
+  context.moveTo(centerX - flameWidth, bodyBottom)
+  context.quadraticCurveTo(centerX - flameWidth * 0.3, bodyBottom + flameHeight * 0.5, centerX, bodyBottom + flameHeight)
+  context.quadraticCurveTo(centerX + flameWidth * 0.3, bodyBottom + flameHeight * 0.5, centerX + flameWidth, bodyBottom)
+  context.stroke()
+  context.globalAlpha = 0.90 * fade
+  context.strokeStyle = "#FFD740"; context.lineWidth = 1.1
+  context.shadowColor = "#FFD740"; context.shadowBlur = 7
+  context.beginPath()
+  context.moveTo(centerX - flameWidth * 0.38, bodyBottom)
+  context.quadraticCurveTo(centerX, bodyBottom + flameHeight * innerFlicker, centerX + flameWidth * 0.38, bodyBottom)
+  context.stroke()
+  context.globalAlpha = 0.60 * fade
+  context.strokeStyle = "#FFD740"; context.lineWidth = 0.8; context.shadowBlur = 5
+  context.beginPath()
+  context.moveTo(centerX, bodyBottom)
+  context.lineTo(centerX, bodyBottom + flameHeight * 1.12 * flicker)
+  context.stroke()
 
-  ctx.shadowBlur = 0
+  context.shadowBlur = 0
   for (let i = 0; i < 3; i++) {
-    const phase = (ts * 0.0012 + i * 0.9) % 1
-    const sy = bodyBot + fh + phase * rh * 0.5
-    const sx = cx + Math.sin(ts * 0.003 + i * 2.1) * bw * 0.4
-    const sr = bw * 0.22 * (1 - phase * 0.5)
-    ctx.globalAlpha = 0.25 * (1 - phase) * fade
-    ctx.fillStyle = "#FFB74D"
-    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill()
+    const phase = (timestamp * 0.0012 + i * 0.9) % 1
+    const sparkY = bodyBottom + flameHeight + phase * rocketHeight * 0.5
+    const sparkX = centerX + Math.sin(timestamp * 0.003 + i * 2.1) * bodyWidth * 0.4
+    const sparkRadius = bodyWidth * 0.22 * (1 - phase * 0.5)
+    context.globalAlpha = 0.25 * (1 - phase) * fade
+    context.fillStyle = "#FFB74D"
+    context.beginPath(); context.arc(sparkX, sparkY, sparkRadius, 0, Math.PI * 2); context.fill()
   }
-  ctx.restore()
+  context.restore()
 }
 
-function doodleDNA(ctx: CanvasRenderingContext2D, cx: number, cy: number, gw: number, gh: number, ts: number, fade: number) {
-  const top = cy - gh / 2
-  const segs = 60
+function doodleDNA(context: CanvasRenderingContext2D, centerX: number, centerY: number, graphWidth: number, graphHeight: number, timestamp: number, fade: number) {
+  const top = centerY - graphHeight / 2
+  const segments = 60
   const twists = 3.0
-  const off = ts * 0.0007
-  ctx.save()
+  const animationOffset = timestamp * 0.0007
+  context.save()
 
-  ctx.lineWidth = 0.9; ctx.shadowBlur = 3
-  for (let i = 0; i <= segs; i++) {
-    const t = i / segs
-    const y = top + t * gh
-    const a1 = t * Math.PI * 2 * twists + off
-    const x1 = cx + (gw / 2) * Math.cos(a1)
-    const x2 = cx + (gw / 2) * Math.cos(a1 + Math.PI)
-    const crossness = Math.abs(Math.sin(a1))
+  context.lineWidth = 0.9; context.shadowBlur = 3
+  for (let i = 0; i <= segments; i++) {
+    const fraction = i / segments
+    const y = top + fraction * graphHeight
+    const angle = fraction * Math.PI * 2 * twists + animationOffset
+    const x1 = centerX + (graphWidth / 2) * Math.cos(angle)
+    const x2 = centerX + (graphWidth / 2) * Math.cos(angle + Math.PI)
+    const crossness = Math.abs(Math.sin(angle))
     if (crossness > 0.55 && i % 3 === 0) {
-      ctx.globalAlpha = crossness * 0.45 * fade
-      ctx.strokeStyle = "#f48fb1"; ctx.shadowColor = "#f48fb1"
-      ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke()
+      context.globalAlpha = crossness * 0.45 * fade
+      context.strokeStyle = "#f48fb1"; context.shadowColor = "#f48fb1"
+      context.beginPath(); context.moveTo(x1, y); context.lineTo(x2, y); context.stroke()
     }
   }
 
-  for (let i = 0; i < segs; i++) {
-    const t1 = i / segs, t2 = (i + 1) / segs
-    const a1 = t1 * Math.PI * 2 * twists + off
-    const a2 = t2 * Math.PI * 2 * twists + off
-    const depth = (Math.cos(a1) + 1) * 0.5
-    ctx.globalAlpha = (0.15 + depth * 0.70) * fade
-    ctx.strokeStyle = "#ff6ec7"; ctx.shadowColor = "#ff6ec7"
-    ctx.lineWidth = 0.8 + depth * 1.8
-    ctx.shadowBlur = 2 + depth * 9
-    ctx.setLineDash(depth < 0.25 ? [2, 3] : [])
-    ctx.beginPath()
-    ctx.moveTo(cx + (gw / 2) * Math.cos(a1), top + t1 * gh)
-    ctx.lineTo(cx + (gw / 2) * Math.cos(a2), top + t2 * gh)
-    ctx.stroke()
+  for (let i = 0; i < segments; i++) {
+    const fraction1 = i / segments, fraction2 = (i + 1) / segments
+    const angle1 = fraction1 * Math.PI * 2 * twists + animationOffset
+    const angle2 = fraction2 * Math.PI * 2 * twists + animationOffset
+    const depth = (Math.cos(angle1) + 1) * 0.5
+    context.globalAlpha = (0.15 + depth * 0.70) * fade
+    context.strokeStyle = "#ff6ec7"; context.shadowColor = "#ff6ec7"
+    context.lineWidth = 0.8 + depth * 1.8
+    context.shadowBlur = 2 + depth * 9
+    context.setLineDash(depth < 0.25 ? [2, 3] : [])
+    context.beginPath()
+    context.moveTo(centerX + (graphWidth / 2) * Math.cos(angle1), top + fraction1 * graphHeight)
+    context.lineTo(centerX + (graphWidth / 2) * Math.cos(angle2), top + fraction2 * graphHeight)
+    context.stroke()
   }
 
-  for (let i = 0; i < segs; i++) {
-    const t1 = i / segs, t2 = (i + 1) / segs
-    const a1 = t1 * Math.PI * 2 * twists + off + Math.PI
-    const a2 = t2 * Math.PI * 2 * twists + off + Math.PI
-    const depth = (Math.cos(a1) + 1) * 0.5
-    ctx.globalAlpha = (0.15 + depth * 0.70) * fade
-    ctx.strokeStyle = "#00d4ff"; ctx.shadowColor = "#00d4ff"
-    ctx.lineWidth = 0.8 + depth * 1.8
-    ctx.shadowBlur = 2 + depth * 9
-    ctx.setLineDash(depth < 0.25 ? [2, 3] : [])
-    ctx.beginPath()
-    ctx.moveTo(cx + (gw / 2) * Math.cos(a1), top + t1 * gh)
-    ctx.lineTo(cx + (gw / 2) * Math.cos(a2), top + t2 * gh)
-    ctx.stroke()
+  for (let i = 0; i < segments; i++) {
+    const fraction1 = i / segments, fraction2 = (i + 1) / segments
+    const angle1 = fraction1 * Math.PI * 2 * twists + animationOffset + Math.PI
+    const angle2 = fraction2 * Math.PI * 2 * twists + animationOffset + Math.PI
+    const depth = (Math.cos(angle1) + 1) * 0.5
+    context.globalAlpha = (0.15 + depth * 0.70) * fade
+    context.strokeStyle = "#00d4ff"; context.shadowColor = "#00d4ff"
+    context.lineWidth = 0.8 + depth * 1.8
+    context.shadowBlur = 2 + depth * 9
+    context.setLineDash(depth < 0.25 ? [2, 3] : [])
+    context.beginPath()
+    context.moveTo(centerX + (graphWidth / 2) * Math.cos(angle1), top + fraction1 * graphHeight)
+    context.lineTo(centerX + (graphWidth / 2) * Math.cos(angle2), top + fraction2 * graphHeight)
+    context.stroke()
   }
 
-  const tA = ((ts * 0.0004) % 1)
-  const aA = tA * Math.PI * 2 * twists + off
-  ctx.setLineDash([])
-  ctx.globalAlpha = 0.90 * fade
-  ctx.fillStyle = "#ff6ec7"; ctx.shadowColor = "#ff6ec7"; ctx.shadowBlur = 10
-  ctx.beginPath(); ctx.arc(cx + (gw / 2) * Math.cos(aA), top + tA * gh, 2.5, 0, Math.PI * 2); ctx.fill()
+  const beadFractionA = ((timestamp * 0.0004) % 1)
+  const beadAngleA = beadFractionA * Math.PI * 2 * twists + animationOffset
+  context.setLineDash([])
+  context.globalAlpha = 0.90 * fade
+  context.fillStyle = "#ff6ec7"; context.shadowColor = "#ff6ec7"; context.shadowBlur = 10
+  context.beginPath(); context.arc(centerX + (graphWidth / 2) * Math.cos(beadAngleA), top + beadFractionA * graphHeight, 2.5, 0, Math.PI * 2); context.fill()
 
-  const tB = ((ts * 0.0004 + 0.5) % 1)
-  const aB = tB * Math.PI * 2 * twists + off + Math.PI
-  ctx.fillStyle = "#00d4ff"; ctx.shadowColor = "#00d4ff"
-  ctx.beginPath(); ctx.arc(cx + (gw / 2) * Math.cos(aB), top + tB * gh, 2.5, 0, Math.PI * 2); ctx.fill()
+  const beadFractionB = ((timestamp * 0.0004 + 0.5) % 1)
+  const beadAngleB = beadFractionB * Math.PI * 2 * twists + animationOffset + Math.PI
+  context.fillStyle = "#00d4ff"; context.shadowColor = "#00d4ff"
+  context.beginPath(); context.arc(centerX + (graphWidth / 2) * Math.cos(beadAngleB), top + beadFractionB * graphHeight, 2.5, 0, Math.PI * 2); context.fill()
 
-  ctx.restore()
+  context.restore()
 }
 
-function doodleLightbulb(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, ts: number, fade: number) {
-  const baseTop = cy + r * 0.55
-  const baseH = r * 0.28
-  const baseW = r * 0.62
-  const filH = r * 0.35
-  const pulse = 0.80 + 0.20 * Math.sin(ts * 0.004)
-  ctx.save()
+function doodleLightbulb(context: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, timestamp: number, fade: number) {
+  const baseTop = centerY + radius * 0.55
+  const baseHeight = radius * 0.28
+  const baseWidth = radius * 0.62
+  const filamentHeight = radius * 0.35
+  const pulse = 0.80 + 0.20 * Math.sin(timestamp * 0.004)
+  context.save()
 
-  ctx.globalAlpha = 0.10 * pulse * fade
-  const grad = ctx.createRadialGradient(cx, cy - r * 0.1, r * 0.2, cx, cy - r * 0.1, r * 1.55)
-  grad.addColorStop(0, "#FFD740"); grad.addColorStop(1, "transparent")
-  ctx.fillStyle = grad
-  ctx.beginPath(); ctx.arc(cx, cy - r * 0.1, r * 1.55, 0, Math.PI * 2); ctx.fill()
+  context.globalAlpha = 0.10 * pulse * fade
+  const glowGradient = context.createRadialGradient(centerX, centerY - radius * 0.1, radius * 0.2, centerX, centerY - radius * 0.1, radius * 1.55)
+  glowGradient.addColorStop(0, "#FFD740"); glowGradient.addColorStop(1, "transparent")
+  context.fillStyle = glowGradient
+  context.beginPath(); context.arc(centerX, centerY - radius * 0.1, radius * 1.55, 0, Math.PI * 2); context.fill()
 
-  ctx.globalAlpha = 0.55 * fade
-  ctx.strokeStyle = "#FFD740"; ctx.lineWidth = 1.5
-  ctx.shadowColor = "#FFD740"; ctx.shadowBlur = 8 + 6 * pulse
-  ctx.fillStyle = `rgba(255,215,64,${0.08 * pulse})`
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke()
+  context.globalAlpha = 0.55 * fade
+  context.strokeStyle = "#FFD740"; context.lineWidth = 1.5
+  context.shadowColor = "#FFD740"; context.shadowBlur = 8 + 6 * pulse
+  context.fillStyle = `rgba(255,215,64,${0.08 * pulse})`
+  context.beginPath(); context.arc(centerX, centerY, radius, 0, Math.PI * 2); context.fill(); context.stroke()
 
-  ctx.globalAlpha = 0.80 * pulse * fade
-  ctx.strokeStyle = "#FFD740"; ctx.lineWidth = 1.2; ctx.shadowBlur = 10
-  ctx.beginPath()
-  ctx.moveTo(cx - baseW * 0.55, cy + r * 0.25)
-  ctx.lineTo(cx - baseW * 0.55, cy + r * 0.25 - filH * 0.4)
-  ctx.quadraticCurveTo(cx - baseW * 0.2, cy - filH * 0.2, cx, cy - filH * 0.5)
-  ctx.quadraticCurveTo(cx + baseW * 0.2, cy - filH * 0.2, cx + baseW * 0.55, cy + r * 0.25 - filH * 0.4)
-  ctx.lineTo(cx + baseW * 0.55, cy + r * 0.25)
-  ctx.stroke()
+  context.globalAlpha = 0.80 * pulse * fade
+  context.strokeStyle = "#FFD740"; context.lineWidth = 1.2; context.shadowBlur = 10
+  context.beginPath()
+  context.moveTo(centerX - baseWidth * 0.55, centerY + radius * 0.25)
+  context.lineTo(centerX - baseWidth * 0.55, centerY + radius * 0.25 - filamentHeight * 0.4)
+  context.quadraticCurveTo(centerX - baseWidth * 0.2, centerY - filamentHeight * 0.2, centerX, centerY - filamentHeight * 0.5)
+  context.quadraticCurveTo(centerX + baseWidth * 0.2, centerY - filamentHeight * 0.2, centerX + baseWidth * 0.55, centerY + radius * 0.25 - filamentHeight * 0.4)
+  context.lineTo(centerX + baseWidth * 0.55, centerY + radius * 0.25)
+  context.stroke()
 
-  ctx.globalAlpha = 0.55 * fade
-  ctx.lineWidth = 1.3; ctx.shadowBlur = 5
+  context.globalAlpha = 0.55 * fade
+  context.lineWidth = 1.3; context.shadowBlur = 5
   ;[0, 1, 2].forEach(i => {
-    const by = baseTop + i * (baseH / 2.5)
-    const bx = baseW * (1 - i * 0.12)
-    ctx.beginPath(); ctx.moveTo(cx - bx, by); ctx.lineTo(cx + bx, by); ctx.stroke()
+    const bandY = baseTop + i * (baseHeight / 2.5)
+    const bandHalfWidth = baseWidth * (1 - i * 0.12)
+    context.beginPath(); context.moveTo(centerX - bandHalfWidth, bandY); context.lineTo(centerX + bandHalfWidth, bandY); context.stroke()
   })
 
-  ctx.lineWidth = 1.0; ctx.shadowBlur = 4
+  context.lineWidth = 1.0; context.shadowBlur = 4
   const rayCount = 8
   for (let i = 0; i < rayCount; i++) {
-    const a = (i / rayCount) * Math.PI * 2 + ts * 0.0008
-    const rIn = r * 1.15
-    const rOut = r * (1.45 + 0.12 * Math.sin(ts * 0.005 + i))
-    ctx.globalAlpha = 0.30 * pulse * fade
-    ctx.beginPath()
-    ctx.moveTo(cx + rIn * Math.cos(a), cy + rIn * Math.sin(a))
-    ctx.lineTo(cx + rOut * Math.cos(a), cy + rOut * Math.sin(a))
-    ctx.stroke()
+    const angle = (i / rayCount) * Math.PI * 2 + timestamp * 0.0008
+    const innerRadius = radius * 1.15
+    const outerRadius = radius * (1.45 + 0.12 * Math.sin(timestamp * 0.005 + i))
+    context.globalAlpha = 0.30 * pulse * fade
+    context.beginPath()
+    context.moveTo(centerX + innerRadius * Math.cos(angle), centerY + innerRadius * Math.sin(angle))
+    context.lineTo(centerX + outerRadius * Math.cos(angle), centerY + outerRadius * Math.sin(angle))
+    context.stroke()
   }
-  ctx.restore()
+  context.restore()
 }
 
-const _TILE_COLORS: [string, string][] = [
+const TILE_COLORS: [string, string][] = [
   ["#ff6ec7", "rgba(255,110,199,0.20)"],
   ["#39ff14", "rgba(57,255,20,0.20)"],
   ["#ffe033", "rgba(255,224,51,0.20)"],
@@ -716,98 +716,98 @@ const _TILE_COLORS: [string, string][] = [
   ["#c77dff", "rgba(199,125,255,0.20)"],
 ]
 
-function doodleNumtiles(ctx: CanvasRenderingContext2D, cx: number, cy: number, tw: number, _ts: number, fade: number, order: number[], ci: number[], nums: number[]) {
-  const cols = 3, rows = 3
-  const gap = tw * 0.18
-  const totalW = cols * tw + (cols - 1) * gap
-  const totalH = rows * tw + (rows - 1) * gap
-  const left = cx - totalW / 2
-  const top = cy - totalH / 2
-  ctx.save()
-  ctx.font = `700 ${Math.round(tw * 0.55)}px 'Caveat', cursive`
-  ctx.textAlign = "center"; ctx.textBaseline = "middle"
+function doodleNumtiles(context: CanvasRenderingContext2D, centerX: number, centerY: number, tileWidth: number, _timestamp: number, fade: number, order: number[], colorIndices: number[], numbers: number[]) {
+  const columns = 3, rows = 3
+  const gap = tileWidth * 0.18
+  const totalWidth = columns * tileWidth + (columns - 1) * gap
+  const totalHeight = rows * tileWidth + (rows - 1) * gap
+  const left = centerX - totalWidth / 2
+  const top = centerY - totalHeight / 2
+  context.save()
+  context.font = `700 ${Math.round(tileWidth * 0.55)}px 'Caveat', cursive`
+  context.textAlign = "center"; context.textBaseline = "middle"
 
   for (let i = 0; i < 9; i++) {
     const idx = order[i]
-    const r = (idx / cols) | 0, c = idx % cols
-    const [stroke, fill] = _TILE_COLORS[ci[idx]]
-    const num = nums[idx]
-    const x = left + c * (tw + gap)
-    const y = top + r * (tw + gap)
-    const rx = tw * 0.22
+    const row = (idx / columns) | 0, col = idx % columns
+    const [stroke, fill] = TILE_COLORS[colorIndices[idx]]
+    const number = numbers[idx]
+    const x = left + col * (tileWidth + gap)
+    const y = top + row * (tileWidth + gap)
+    const cornerRadius = tileWidth * 0.22
 
-    ctx.globalAlpha = 0.62 * fade
-    ctx.fillStyle = fill
-    ctx.strokeStyle = stroke
-    ctx.lineWidth = 1.3
-    ctx.shadowColor = stroke; ctx.shadowBlur = 6
-    ctx.beginPath()
-    ctx.moveTo(x + rx, y)
-    ctx.lineTo(x + tw - rx, y); ctx.arcTo(x + tw, y, x + tw, y + rx, rx)
-    ctx.lineTo(x + tw, y + tw - rx); ctx.arcTo(x + tw, y + tw, x + tw - rx, y + tw, rx)
-    ctx.lineTo(x + rx, y + tw); ctx.arcTo(x, y + tw, x, y + tw - rx, rx)
-    ctx.lineTo(x, y + rx); ctx.arcTo(x, y, x + rx, y, rx)
-    ctx.closePath()
-    ctx.fill(); ctx.stroke()
+    context.globalAlpha = 0.62 * fade
+    context.fillStyle = fill
+    context.strokeStyle = stroke
+    context.lineWidth = 1.3
+    context.shadowColor = stroke; context.shadowBlur = 6
+    context.beginPath()
+    context.moveTo(x + cornerRadius, y)
+    context.lineTo(x + tileWidth - cornerRadius, y); context.arcTo(x + tileWidth, y, x + tileWidth, y + cornerRadius, cornerRadius)
+    context.lineTo(x + tileWidth, y + tileWidth - cornerRadius); context.arcTo(x + tileWidth, y + tileWidth, x + tileWidth - cornerRadius, y + tileWidth, cornerRadius)
+    context.lineTo(x + cornerRadius, y + tileWidth); context.arcTo(x, y + tileWidth, x, y + tileWidth - cornerRadius, cornerRadius)
+    context.lineTo(x, y + cornerRadius); context.arcTo(x, y, x + cornerRadius, y, cornerRadius)
+    context.closePath()
+    context.fill(); context.stroke()
 
-    ctx.globalAlpha = 0.85 * fade
-    ctx.fillStyle = stroke
-    ctx.shadowBlur = 9
-    ctx.fillText(String(num), x + tw / 2, y + tw / 2)
+    context.globalAlpha = 0.85 * fade
+    context.fillStyle = stroke
+    context.shadowBlur = 9
+    context.fillText(String(number), x + tileWidth / 2, y + tileWidth / 2)
   }
-  ctx.restore()
+  context.restore()
 }
 
-function drawDoodle(ctx: CanvasRenderingContext2D, d: Doodle, ts: number, fade: number) {
-  const p = d.params
-  switch (d.type) {
-    case 'gear':       doodleGear(ctx, d.cx, d.cy, p.r, ts, fade); break
-    case 'sine':       doodleSineGraph(ctx, d.cx, d.cy, p.gw, p.gh, ts, fade); break
-    case 'helix':      doodleHelix(ctx, d.cx, d.cy, p.gw, p.gh, ts, fade); break
-    case 'matrix':     doodleMatrix(ctx, d.cx, d.cy, p.cw, p.ch, fade); break
-    case 'atom':       doodleAtom(ctx, d.cx, d.cy, p.r, ts, fade); break
-    case 'fibonacci':  doodleFibonacci(ctx, d.cx, d.cy, p.r, fade); break
-    case 'venn':       doodleVenn(ctx, d.cx, d.cy, p.r, fade); break
-    case 'triangle':   doodleTriangle(ctx, d.cx, d.cy, p.size, fade); break
-    case 'star':       doodleStar(ctx, d.cx, d.cy, p.r, fade); break
-    case 'numberLine': doodleNumberLine(ctx, d.cx, d.cy, p.lw, fade); break
-    case 'rocket':     doodleRocket(ctx, d.cx, d.cy, p.rh, ts, fade); break
-    case 'dna':        doodleDNA(ctx, d.cx, d.cy, p.gw, p.gh, ts, fade); break
-    case 'lightbulb':  doodleLightbulb(ctx, d.cx, d.cy, p.r, ts, fade); break
-    case 'numtiles':   doodleNumtiles(ctx, d.cx, d.cy, p.tw, ts, fade, p.order, p.ci, p.nums); break
+function drawDoodle(context: CanvasRenderingContext2D, doodle: Doodle, timestamp: number, fade: number) {
+  const params = doodle.params
+  switch (doodle.type) {
+    case 'gear':       doodleGear(context, doodle.cx, doodle.cy, params.radius, timestamp, fade); break
+    case 'sine':       doodleSineGraph(context, doodle.cx, doodle.cy, params.graphWidth, params.graphHeight, timestamp, fade); break
+    case 'helix':      doodleHelix(context, doodle.cx, doodle.cy, params.graphWidth, params.graphHeight, timestamp, fade); break
+    case 'matrix':     doodleMatrix(context, doodle.cx, doodle.cy, params.cellWidth, params.cellHeight, fade); break
+    case 'atom':       doodleAtom(context, doodle.cx, doodle.cy, params.radius, timestamp, fade); break
+    case 'fibonacci':  doodleFibonacci(context, doodle.cx, doodle.cy, params.radius, fade); break
+    case 'venn':       doodleVenn(context, doodle.cx, doodle.cy, params.radius, fade); break
+    case 'triangle':   doodleTriangle(context, doodle.cx, doodle.cy, params.size, fade); break
+    case 'star':       doodleStar(context, doodle.cx, doodle.cy, params.radius, fade); break
+    case 'numberLine': doodleNumberLine(context, doodle.cx, doodle.cy, params.lineLength, fade); break
+    case 'rocket':     doodleRocket(context, doodle.cx, doodle.cy, params.rocketHeight, timestamp, fade); break
+    case 'dna':        doodleDNA(context, doodle.cx, doodle.cy, params.graphWidth, params.graphHeight, timestamp, fade); break
+    case 'lightbulb':  doodleLightbulb(context, doodle.cx, doodle.cy, params.radius, timestamp, fade); break
+    case 'numtiles':   doodleNumtiles(context, doodle.cx, doodle.cy, params.tileWidth, timestamp, fade, params.order, params.colorIndices, params.numbers); break
   }
 }
 
 // ── Orchestration ─────────────────────────────────────────────────────────────
 export function showHomeLightboard(): void {
-  const sec = document.getElementById("home-lightboard-section")
-  if (sec) sec.style.display = ""
+  const section = document.getElementById("home-lightboard-section")
+  if (section) section.style.display = ""
 
   if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null }
   if (mutationTimer) { clearTimeout(mutationTimer); mutationTimer = null }
-  currentStar = null; currentFirework = null; stars = []; currentStartTs = null
+  currentStar = null; currentFirework = null; stars = []; animationStartTimestamp = null
 
   const canvas = document.getElementById("home-lb-canvas") as HTMLCanvasElement | null
-  const lb = document.getElementById("home-lightboard")
-  if (!canvas || !lb) return
+  const lightboardElement = document.getElementById("home-lightboard")
+  if (!canvas || !lightboardElement) return
 
-  canvas.width = lb.offsetWidth || 640
-  canvas.height = lb.offsetHeight || 300
-  const w = canvas.width, h = canvas.height
+  canvas.width = lightboardElement.offsetWidth || 640
+  canvas.height = lightboardElement.offsetHeight || 300
+  const width = canvas.width, height = canvas.height
 
-  lightboardConfig = buildConfig(w, h)
-  const cfg = lightboardConfig
+  lightboardConfig = buildConfig(width, height)
+  const config = lightboardConfig
 
-  const doodleReserved = () => cfg.doodles.map(d => {
-    const sz = DOODLE_PCT[d.type]
-    return { cx: d.pctCX, cy: d.pctCY, rw: sz.rw * 1.4, rh: sz.rh * 1.4 }
+  const doodleReserved = () => config.doodles.map(d => {
+    const size = DOODLE_SIZE_PCT[d.type]
+    return { cx: d.pctCX, cy: d.pctCY, halfWidthPct: size.radiusWidthPct * 1.4, halfHeightPct: size.radiusHeightPct * 1.4 }
   })
 
-  const poolOrder = HOME_LB_POOL.map((_, i) => i).sort(() => Math.random() - 0.5)
+  const poolOrder = EQUATION_POOL.map((_, i) => i).sort(() => Math.random() - 0.5)
   const count = 9 + Math.floor(Math.random() * 4)
-  const selIdx = poolOrder.slice(0, count)
-  const selected = selIdx.map(i => HOME_LB_POOL[i])
-  const styles = selected.map(item => pickStyle(item.text))
+  const selectedIndices = poolOrder.slice(0, count)
+  const selected = selectedIndices.map(i => EQUATION_POOL[i])
+  const styles = selected.map(item => pickTextStyle(item.text))
   const positions = findRandomPositions(styles, doodleReserved())
   const actual = positions.length
 
@@ -816,33 +816,33 @@ export function showHomeLightboard(): void {
     item: LightboardItem
     pos: { x: number; y: number; wPct: number; hPct: number }
     delay: number
-    poolIdx: number
+    poolIndex: number
     fontFamily: string
     fontWeight: number
     fontSize: number
   }
 
   const textEntries: TextEntry[] = selected.slice(0, actual).map((item, i) => ({
-    kind: "text" as const, item, pos: positions[i], delay: 0, poolIdx: selIdx[i],
+    kind: "text" as const, item, pos: positions[i], delay: 0, poolIndex: selectedIndices[i],
     fontFamily: styles[i].family, fontWeight: styles[i].weight, fontSize: styles[i].size,
   }))
-  const doodleEntries = cfg.doodles.map(d => ({ kind: "doodle" as const, d }))
+  const doodleEntries = config.doodles.map(d => ({ kind: "doodle" as const, d }))
   const allEntries = [...textEntries, ...doodleEntries].sort(() => Math.random() - 0.5)
-  let t = 1 + Math.random() * 2
+  let delaySeconds = 1 + Math.random() * 2
   allEntries.forEach(entry => {
-    if (entry.kind === "text") { (entry as TextEntry).delay = t }
-    else { entry.d.showMs = t * 1000 }
-    t += 3 + Math.random() * 4
+    if (entry.kind === "text") { (entry as TextEntry).delay = delaySeconds }
+    else { entry.d.showMs = delaySeconds * 1000 }
+    delaySeconds += 3 + Math.random() * 4
   })
 
   const surface = document.getElementById("home-lb-surface")
   if (!surface) return
   surface.innerHTML = ""
 
-  const activeItems: { item: LightboardItem; pos: { x: number; y: number; wPct?: number; hPct?: number }; el: HTMLElement; poolIdx: number }[] = []
-  const usedPool = new Set(selIdx.slice(0, actual))
+  const activeItems: { item: LightboardItem; pos: { x: number; y: number; wPct?: number; hPct?: number }; el: HTMLElement; poolIndex: number }[] = []
+  const usedPool = new Set(selectedIndices.slice(0, actual))
 
-  function makeTextEl(item: LightboardItem, pos: { x: number; y: number }, delaySec: number, fontFamily: string, fontWeight: number, fontSize: number): HTMLElement {
+  function createTextElement(item: LightboardItem, pos: { x: number; y: number }, delaySec: number, fontFamily: string, fontWeight: number, fontSize: number): HTMLElement {
     const el = document.createElement("div")
     el.className = "home-lb-item"
     el.innerHTML = item.text + " "
@@ -860,32 +860,32 @@ export function showHomeLightboard(): void {
     return el
   }
 
-  textEntries.forEach(({ item, pos, delay, fontFamily, fontWeight, fontSize, poolIdx }) => {
-    const el = makeTextEl(item, pos, delay, fontFamily, fontWeight, fontSize)
+  textEntries.forEach(({ item, pos, delay, fontFamily, fontWeight, fontSize, poolIndex }) => {
+    const el = createTextElement(item, pos, delay, fontFamily, fontWeight, fontSize)
     surface.appendChild(el)
-    activeItems.push({ item, pos, el, poolIdx })
+    activeItems.push({ item, pos, el, poolIndex })
   })
 
   function addItem() {
-    const available = HOME_LB_POOL.map((_, i) => i).filter(i => !usedPool.has(i))
+    const available = EQUATION_POOL.map((_, i) => i).filter(i => !usedPool.has(i))
     if (!available.length) return
-    const poolIdx = available[Math.floor(Math.random() * available.length)]
-    const item = HOME_LB_POOL[poolIdx]
-    const style = pickStyle(item.text)
+    const poolIndex = available[Math.floor(Math.random() * available.length)]
+    const item = EQUATION_POOL[poolIndex]
+    const style = pickTextStyle(item.text)
     const spots = findRandomPositions([style], doodleReserved(), activeItems.map(a => a.pos))
     if (!spots.length) return
     const pos = spots[0]
-    const el = makeTextEl(item, pos, 0, style.family, style.weight, style.size)
+    const el = createTextElement(item, pos, 0, style.family, style.weight, style.size)
     surface!.appendChild(el)
-    activeItems.push({ item, pos, el, poolIdx })
-    usedPool.add(poolIdx)
+    activeItems.push({ item, pos, el, poolIndex })
+    usedPool.add(poolIndex)
   }
 
   function removeItem() {
     if (activeItems.length <= 4) return
     const idx = Math.floor(Math.random() * activeItems.length)
-    const { el, poolIdx } = activeItems.splice(idx, 1)[0]
-    usedPool.delete(poolIdx)
+    const { el, poolIndex } = activeItems.splice(idx, 1)[0]
+    usedPool.delete(poolIndex)
     el.style.transition = "opacity 1.8s ease"
     el.style.opacity = "0"
     setTimeout(() => el.remove(), 1800)
@@ -900,31 +900,31 @@ export function showHomeLightboard(): void {
   }
   scheduleMutation()
 
-  let fwNext = Infinity
+  let nextFireworkAt = Infinity
 
-  function frame(ts: number) {
+  function frame(timestamp: number) {
     animationFrameId = requestAnimationFrame(frame)
-    if (!currentStartTs) { currentStartTs = ts; fwNext = ts + 4500 }
-    const elapsed = ts - currentStartTs
-    const ctx = canvas!.getContext("2d")!
-    const cw = canvas!.width, ch = canvas!.height
-    ctx.clearRect(0, 0, cw, ch)
+    if (!animationStartTimestamp) { animationStartTimestamp = timestamp; nextFireworkAt = timestamp + 4500 }
+    const elapsed = timestamp - animationStartTimestamp
+    const context = canvas!.getContext("2d")!
+    const canvasWidth = canvas!.width, canvasHeight = canvas!.height
+    context.clearRect(0, 0, canvasWidth, canvasHeight)
 
-    cfg.doodles.forEach(d => {
+    config.doodles.forEach(d => {
       const fade = Math.min(1, Math.max(0, (elapsed - d.showMs) / 2500))
-      if (fade > 0) drawDoodle(ctx, d, ts, fade)
+      if (fade > 0) drawDoodle(context, d, timestamp, fade)
     })
 
-    if (!currentFirework && ts >= fwNext) { currentFirework = createFirework(cw, ch); fwNext = ts + 9000 + Math.random() * 5000 }
-    if (currentFirework && updateFirework(ctx, currentFirework, ts)) currentFirework = null
+    if (!currentFirework && timestamp >= nextFireworkAt) { currentFirework = createFirework(canvasWidth, canvasHeight); nextFireworkAt = timestamp + 9000 + Math.random() * 5000 }
+    if (currentFirework && updateFirework(context, currentFirework, timestamp)) currentFirework = null
   }
 
   animationFrameId = requestAnimationFrame(frame)
 }
 
 export function hideHomeLightboard(): void {
-  const sec = document.getElementById("home-lightboard-section")
-  if (sec) sec.style.display = "none"
+  const section = document.getElementById("home-lightboard-section")
+  if (section) section.style.display = "none"
   if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null }
   if (mutationTimer) { clearTimeout(mutationTimer); mutationTimer = null }
   currentStar = null

@@ -25,6 +25,10 @@ module.exports = {
         },
         exclude: /node_modules/,
       },
+      {
+        test: /\.svg$/,
+        type: 'asset/inline',
+      },
     ],
   },
   devtool: 'source-map',

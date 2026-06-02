@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { useGameState } from "../context/GameContext"
 import { showHomeLightboard, hideHomeLightboard } from "../home-lightboard"
+import timThreeQuarterUrl from "../assets/Tim_three-quarter-full-RGB.svg"
 
 const LIGHTBOARD_COLORS = [
   { color: "#ff6ec7", glow: "rgba(255,110,199,0.5)" },
@@ -161,7 +162,7 @@ export function Lightboard({ equations }: LightboardProps) {
   return (
     <Section>
       <Tim
-        src="/static/images/Tim_three-quarter-full-RGB.svg"
+        src={timThreeQuarterUrl}
         alt="Tim"
       />
       <Board>
@@ -185,7 +186,7 @@ export function HomeLightboard() {
   return (
     <Section>
       <Tim
-        src="/static/images/Tim_three-quarter-full-RGB.svg"
+        src={timThreeQuarterUrl}
         alt="Tim"
       />
       <Board id="home-lightboard">

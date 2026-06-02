@@ -19,6 +19,9 @@ export default defineConfig({
   build: {
     outDir: 'dist/lib',
     sourcemap: true,
+    // Inline image assets (e.g. the Tim SVGs) as data URIs so the published
+    // library is self-contained and consumers don't need to copy static files.
+    assetsInlineLimit: (filePath) => filePath.endsWith('.svg') ? true : undefined,
     lib: {
       entry: resolve(__dirname, 'src/client/lib/index.tsx'),
       name: 'Arithmix',

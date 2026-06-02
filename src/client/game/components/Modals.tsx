@@ -1,6 +1,8 @@
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { useGameState, useGameDispatch } from "../context/GameContext"
+import timWaveUrl from "../assets/tim-wave.svg"
+import timFrontUrl from "../assets/tim-front.svg"
 
 const Overlay = styled.div`
   position: fixed;
@@ -179,8 +181,8 @@ export function GameOverModal({ onPlayAgain }: ModalsProps) {
   if (!showGameOverModal) return null
 
   const timSrc = puzzlesSolved >= 5
-    ? "/static/images/tim-wave.svg"
-    : "/static/images/tim-front.svg"
+    ? timWaveUrl
+    : timFrontUrl
 
   function handleDismiss() {
     dispatch({ type: "HIDE_GAME_OVER_MODAL" })
