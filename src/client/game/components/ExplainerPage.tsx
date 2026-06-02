@@ -12,10 +12,11 @@ export function ExplainerPage() {
     document.body.classList.add("explainer-mode")
     initSampler()
     initPerms()
-    initCarousel()
+    const disposeCarousel = initCarousel()
 
     return () => {
       document.body.classList.remove("explainer-mode")
+      disposeCarousel()
     }
   }, [])
 

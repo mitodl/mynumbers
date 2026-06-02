@@ -16,7 +16,7 @@ const SUBTITLES: Record<number, string> = {
   5: "MIT Learn courses go deeper on these ideas and more",
 }
 
-export function initCarousel(): void {
+export function initCarousel(): () => void {
   const track = document.getElementById("ex-track")!
   const viewport = document.getElementById("ex-viewport")!
   const dotsContainer = document.getElementById("ex-dots")!
@@ -27,15 +27,21 @@ export function initCarousel(): void {
   const subtitle = document.getElementById("ex-slide-subtitle")!
   document.getElementById("ex-total")!.textContent = String(TOTAL_SLIDES)
 
+  // All listeners are bound with this signal so a single abort() tears the
+  // whole carousel down cleanly (prevents leaks / double-binding on remount).
+  const controller = new AbortController()
+  const { signal } = controller
+
   let current = 1
 
+  dotsContainer.replaceChildren()
   for (let i = 1; i <= TOTAL_SLIDES; i++) {
     const dot = document.createElement("button")
     dot.className = "ex-dot"
     dot.setAttribute("role", "tab")
     dot.setAttribute("aria-label", `Slide ${i}`)
     dot.dataset.target = String(i)
-    dot.addEventListener("click", () => goToSlide(i))
+    dot.addEventListener("click", () => goToSlide(i), { signal })
     dotsContainer.appendChild(dot)
   }
 
@@ -62,8 +68,8 @@ export function initCarousel(): void {
     if (slideNumber === 2 && previous !== 2) resetTreeAndAnimate()
   }
 
-  prevBtn.addEventListener("click", () => goToSlide(current - 1))
-  nextBtn.addEventListener("click", () => goToSlide(current + 1))
+  prevBtn.addEventListener("click", () => goToSlide(current - 1), { signal })
+  nextBtn.addEventListener("click", () => goToSlide(current + 1), { signal })
 
   function returnToGame(): void {
     window.history.back()
@@ -75,7 +81,7 @@ export function initCarousel(): void {
     if (event.key === "ArrowRight") { goToSlide(current + 1); event.preventDefault() }
     else if (event.key === "ArrowLeft") { goToSlide(current - 1); event.preventDefault() }
     else if (event.key === "Escape") { returnToGame() }
-  })
+  }, { signal })
 
   // Swipe
   ;(function bindSwipe() {
@@ -85,16 +91,16 @@ export function initCarousel(): void {
       if ((event.target as HTMLElement).closest("button, select, input, a, svg .tree-node, .ex-pslot")) return
       swipeStartX = event.clientX; swipeDeltaX = 0; isDragging = true
       try { viewport.setPointerCapture(event.pointerId) } catch (_) {}
-    })
-    viewport.addEventListener("pointermove", (event) => { if (isDragging && swipeStartX !== null) swipeDeltaX = event.clientX - swipeStartX })
+    }, { signal })
+    viewport.addEventListener("pointermove", (event) => { if (isDragging && swipeStartX !== null) swipeDeltaX = event.clientX - swipeStartX }, { signal })
     viewport.addEventListener("pointerup", () => {
       if (!isDragging) return
       isDragging = false
       const swipeRatio = swipeDeltaX / viewport.clientWidth
       if (swipeRatio < -SWIPE_THRESHOLD) goToSlide(current + 1)
       else if (swipeRatio > SWIPE_THRESHOLD) goToSlide(current - 1)
-    })
-    viewport.addEventListener("pointercancel", () => { isDragging = false })
+    }, { signal })
+    viewport.addEventListener("pointercancel", () => { isDragging = false }, { signal })
   })()
 
   // Click-to-jump
@@ -104,7 +110,7 @@ export function initCarousel(): void {
       const jumpTarget = parseInt(jumpEl.dataset.jump!, 10)
       goToSlide(jumpTarget, { highlight: !!jumpEl.dataset.highlight })
     }
-  })
+  }, { signal })
 
   // Intercept home navigations
   document.addEventListener("click", (event) => {
@@ -113,7 +119,7 @@ export function initCarousel(): void {
     if (!homeLink) return
     event.preventDefault()
     returnToGame()
-  })
+  }, { signal })
 
   // "Go deeper" drawers
   document.querySelectorAll<HTMLElement>(".ex-deeper").forEach((btn) => {
@@ -123,9 +129,16 @@ export function initCarousel(): void {
       const open = !drawer.hidden
       drawer.hidden = open
       btn.textContent = open ? "Go deeper ▾" : "Go deeper ▴"
-    })
+    }, { signal })
   })
 
   // Start on slide 1
   goToSlide(1)
+
+  // Teardown: drop every listener and clear generated dots so a remount
+  // (e.g. React StrictMode's double-invoke) can't duplicate them.
+  return () => {
+    controller.abort()
+    dotsContainer.replaceChildren()
+  }
 }
