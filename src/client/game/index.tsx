@@ -17,7 +17,7 @@ root.render(
           <App />
         </GameProvider>
       } />
-      <Route path="/explainer" element={
+      <Route path="/arithmix/explainer" element={
         <Suspense fallback={<div />}>
           <ExplainerPage />
         </Suspense>

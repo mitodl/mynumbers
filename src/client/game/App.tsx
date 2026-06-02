@@ -160,7 +160,7 @@ export function App() {
         <ModeSelector />
         <TemplateArea />
         <ExplainerLinkRow>
-          <ExplainerLink to="/explainer">
+          <ExplainerLink to="/arithmix/explainer">
             Inside <span>ARITHMIX</span>
           </ExplainerLink>
         </ExplainerLinkRow>
