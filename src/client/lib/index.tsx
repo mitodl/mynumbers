@@ -14,7 +14,7 @@ import { GlobalStyles } from "../game/GlobalStyles"
 import { ExplainerPage as ExplainerPageInner } from "../game/components/ExplainerPage"
 
 /**
- * Full self-contained app: the game at "/" and the explainer at "/arithmix/explainer",
+ * Full self-contained app: the game at "/arithmix" and the explainer at "/arithmix/explainer",
  * wired together with the built-in router. Drop this in and the in-app links
  * (e.g. "How it works") navigate between the two pages automatically.
  */
@@ -24,7 +24,7 @@ export function Arithmix(): ReactElement {
       <GlobalStyles />
       <Routes>
         <Route
-          path="/"
+          path="/arithmix"
           element={
             <GameProvider>
               <App />

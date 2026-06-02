@@ -12,7 +12,7 @@ root.render(
   <Router>
     <GlobalStyles />
     <Routes>
-      <Route path="/" element={
+      <Route path="/arithmix" element={
         <GameProvider>
           <App />
         </GameProvider>

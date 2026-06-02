@@ -298,7 +298,7 @@ export function ExplainerPage() {
 
             <div className="ex-final-cta">
               <a className="ex-cta ex-cta-primary" href="https://learn.mit.edu" target="_blank" rel="noopener">Explore Courses</a>
-              <button className="ex-cta ex-cta-secondary" onClick={() => navigate("/")}>Play ARITHMIX →</button>
+              <button className="ex-cta ex-cta-secondary" onClick={() => navigate("/arithmix")}>Play ARITHMIX →</button>
             </div>
           </section>
         </div>
