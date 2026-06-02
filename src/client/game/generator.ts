@@ -43,7 +43,7 @@ export interface CheckResult {
 const ALL_OPERATORS = ['+', '-', '*', '/']
 const MAX_LEAF_VALUE = 19
 const MIN_LEAF_VALUE = 1
-const MAX_GENERATION_ATTEMPTS = 2000
+const MAX_GENERATION_ATTEMPTS = 20000
 
 const OPERATOR_PRECEDENCE: Record<string, number> = { '+': 1, '-': 1, '*': 2, '/': 2 }
 
@@ -374,7 +374,6 @@ export function puzzleNew({
 
 export function puzzleRush({ difficulty = 1, decoys = 2 } = {}): PuzzleOut {
   if (difficulty < 1 || difficulty > 12) throw new Error('difficulty must be 1-12')
-  console.log("difficulty", difficulty)
   const config = DIFFICULTY_CONFIGS[difficulty]
 
   for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt++) {

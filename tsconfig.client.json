@@ -14,5 +14,10 @@
     "jsx": "react-jsx"
   },
   "include": ["src/client/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "src/client/**/*.test.ts",
+    "src/client/**/*.test.tsx",
+    "src/client/game/testUtils.tsx"
+  ]
 }
