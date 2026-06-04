@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { cancelTreeAnims, resetTreeAndAnimate } from './tree'
-import { stopStream } from './sampler'
+import { stopSampleStream } from './sampler'
 import { stopAuto } from './perms'
 
 const TOTAL_SLIDES = 5
@@ -63,7 +63,7 @@ export function initCarousel(): () => void {
       slide.classList.add("is-jumped")
     }
     if (slideNumber !== 4) stopAuto()
-    if (slideNumber !== 3) stopStream()
+    if (slideNumber !== 3) stopSampleStream()
     if (slideNumber !== 2) cancelTreeAnims()
     if (slideNumber === 2 && previous !== 2) resetTreeAndAnimate()
   }

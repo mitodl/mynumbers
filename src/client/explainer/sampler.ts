@@ -4,168 +4,187 @@
 
 import { reducedMotion } from './tree'
 
-const TARGET_BANDS: Record<string, [number, number]> = {
+const TARGET_VALUE_RANGES: Record<string, [number, number]> = {
   wide: [10, 99],
   mid: [20, 60],
   narrow: [25, 35],
 }
-const OP_SETS: Record<string, string[]> = {
+const OPERATOR_SETS: Record<string, string[]> = {
   add: ["+"],
   addsub: ["+", "-"],
   all: ["+", "-", "*", "/"],
 }
 
-function randInt(min: number, max: number): number {
+function randomIntInRange(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 interface Expression {
-  a: number
-  b: number
-  c: number
-  firstOp: string
-  secondOp: string
+  operandA: number
+  operandB: number
+  operandC: number
+  firstOperator: string
+  secondOperator: string
 }
 
-function genExpression(ops: string[]): Expression {
-  const pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-  const picks: number[] = []
+function generateRandomExpression(operators: string[]): Expression {
+  const operandPool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  const chosenOperands: number[] = []
   for (let i = 0; i < 3; i++) {
-    const pickIndex = randInt(0, pool.length - 1)
-    picks.push(pool.splice(pickIndex, 1)[0])
+    const poolIndex = randomIntInRange(0, operandPool.length - 1)
+    chosenOperands.push(operandPool.splice(poolIndex, 1)[0])
   }
-  const firstOp = ops[randInt(0, ops.length - 1)]
-  const secondOp = ops[randInt(0, ops.length - 1)]
-  return { a: picks[0], b: picks[1], c: picks[2], firstOp, secondOp }
-}
-
-function evalExpr(expr: Expression): number {
-  const isMul = (op: string) => op === "*" || op === "/"
-  const apply = (x: number, op: string, y: number) =>
-    op === "+" ? x + y : op === "-" ? x - y : op === "*" ? x * y : y === 0 ? NaN : x / y
-  if (isMul(expr.firstOp) && !isMul(expr.secondOp)) return apply(apply(expr.a, expr.firstOp, expr.b), expr.secondOp, expr.c)
-  if (!isMul(expr.firstOp) && isMul(expr.secondOp)) return apply(expr.a, expr.firstOp, apply(expr.b, expr.secondOp, expr.c))
-  return apply(apply(expr.a, expr.firstOp, expr.b), expr.secondOp, expr.c)
-}
-
-const OP_DISPLAY: Record<string, string> = { "+": "+", "-": "−", "*": "×", "/": "÷" }
-function fmtExpr(expr: Expression): string {
-  return `${expr.a} ${OP_DISPLAY[expr.firstOp]} ${expr.b} ${OP_DISPLAY[expr.secondOp]} ${expr.c}`
-}
-
-function classify(expr: Expression, _ops: string[], band: [number, number]): { ok: boolean; val: number; reason: string } {
-  const value = evalExpr(expr)
-  if (!Number.isFinite(value)) return { ok: false, val: value, reason: "div by zero" }
-  if (!Number.isInteger(value)) return { ok: false, val: value, reason: "non-integer" }
-  if (value < band[0] || value > band[1]) return { ok: false, val: value, reason: `out of [${band[0]},${band[1]}]` }
-  return { ok: true, val: value, reason: "accepted ✓" }
-}
-
-function estimateP(opsKey: string, bandKey: string, samples = 4000): number {
-  const ops = OP_SETS[opsKey]
-  const band = TARGET_BANDS[bandKey]
-  let accepted = 0
-  for (let i = 0; i < samples; i++) {
-    if (classify(genExpression(ops), ops, band).ok) accepted++
+  const firstOperator = operators[randomIntInRange(0, operators.length - 1)]
+  const secondOperator = operators[randomIntInRange(0, operators.length - 1)]
+  return {
+    operandA: chosenOperands[0],
+    operandB: chosenOperands[1],
+    operandC: chosenOperands[2],
+    firstOperator,
+    secondOperator,
   }
-  return Math.max(1e-6, accepted / samples)
 }
 
-function fmtPct(x: number): string {
-  if (x >= 0.001) return (x * 100).toFixed(1) + "%"
-  return x.toExponential(2)
+function evaluateExpression(expression: Expression): number {
+  const isMultiplicative = (operator: string) => operator === "*" || operator === "/"
+  const applyOperator = (left: number, operator: string, right: number) =>
+    operator === "+" ? left + right
+      : operator === "-" ? left - right
+      : operator === "*" ? left * right
+      : right === 0 ? NaN : left / right
+  if (isMultiplicative(expression.firstOperator) && !isMultiplicative(expression.secondOperator)) {
+    return applyOperator(applyOperator(expression.operandA, expression.firstOperator, expression.operandB), expression.secondOperator, expression.operandC)
+  }
+  if (!isMultiplicative(expression.firstOperator) && isMultiplicative(expression.secondOperator)) {
+    return applyOperator(expression.operandA, expression.firstOperator, applyOperator(expression.operandB, expression.secondOperator, expression.operandC))
+  }
+  return applyOperator(applyOperator(expression.operandA, expression.firstOperator, expression.operandB), expression.secondOperator, expression.operandC)
 }
-function fmtExpected(p: number): string { return (1 / p).toFixed(1) }
-function fmtFail(p: number): string {
-  if (p >= 0.02) return "≈ 0"
-  const failProb = Math.pow(1 - p, 2000)
-  if (failProb < 1e-6) return "< 1e−6"
-  return failProb.toExponential(2)
+
+const OPERATOR_SYMBOLS: Record<string, string> = { "+": "+", "-": "−", "*": "×", "/": "÷" }
+function formatExpression(expression: Expression): string {
+  return `${expression.operandA} ${OPERATOR_SYMBOLS[expression.firstOperator]} ${expression.operandB} ${OPERATOR_SYMBOLS[expression.secondOperator]} ${expression.operandC}`
+}
+
+interface ClassificationResult {
+  accepted: boolean
+  value: number
+  reason: string
+}
+
+function classifyExpression(expression: Expression, valueRange: [number, number]): ClassificationResult {
+  const value = evaluateExpression(expression)
+  if (!Number.isFinite(value)) return { accepted: false, value, reason: "div by zero" }
+  if (!Number.isInteger(value)) return { accepted: false, value, reason: "non-integer" }
+  if (value < valueRange[0] || value > valueRange[1]) return { accepted: false, value, reason: `out of [${valueRange[0]},${valueRange[1]}]` }
+  return { accepted: true, value, reason: "accepted ✓" }
+}
+
+function estimateAcceptanceProbability(operatorSetKey: string, rangeKey: string, sampleCount = 4000): number {
+  const operators = OPERATOR_SETS[operatorSetKey]
+  const valueRange = TARGET_VALUE_RANGES[rangeKey]
+  let acceptedCount = 0
+  for (let i = 0; i < sampleCount; i++) {
+    if (classifyExpression(generateRandomExpression(operators), valueRange).accepted) acceptedCount++
+  }
+  return Math.max(1e-6, acceptedCount / sampleCount)
+}
+
+function formatPercent(probability: number): string {
+  if (probability >= 0.001) return (probability * 100).toFixed(1) + "%"
+  return probability.toExponential(2)
+}
+function formatExpectedAttempts(probability: number): string { return (1 / probability).toFixed(1) }
+function formatFailureProbability(probability: number): string {
+  if (probability >= 0.02) return "≈ 0"
+  const failureProbability = Math.pow(1 - probability, 2000)
+  if (failureProbability < 1e-6) return "< 1e−6"
+  return failureProbability.toExponential(2)
 }
 
 function refreshSamplerStats(): number {
-  const opsKey = (document.getElementById("s-ops") as HTMLSelectElement).value
-  const bandKey = (document.getElementById("s-range") as HTMLSelectElement).value
-  const prob = estimateP(opsKey, bandKey)
-  document.getElementById("s-p")!.textContent = fmtPct(prob)
-  document.getElementById("s-exp")!.textContent = fmtExpected(prob)
-  document.getElementById("s-fail")!.textContent = fmtFail(prob)
-  return prob
+  const operatorSetKey = (document.getElementById("s-ops") as HTMLSelectElement).value
+  const rangeKey = (document.getElementById("s-range") as HTMLSelectElement).value
+  const probability = estimateAcceptanceProbability(operatorSetKey, rangeKey)
+  document.getElementById("s-p")!.textContent = formatPercent(probability)
+  document.getElementById("s-exp")!.textContent = formatExpectedAttempts(probability)
+  document.getElementById("s-fail")!.textContent = formatFailureProbability(probability)
+  return probability
 }
 
-let streamTimer: ReturnType<typeof setInterval> | null = null
+let streamIntervalId: ReturnType<typeof setInterval> | null = null
 
-export function stopStream(): void {
-  if (streamTimer) { clearInterval(streamTimer); streamTimer = null }
+export function stopSampleStream(): void {
+  if (streamIntervalId) { clearInterval(streamIntervalId); streamIntervalId = null }
 }
 
-function runStream(): void {
-  stopStream()
-  const opsKey = (document.getElementById("s-ops") as HTMLSelectElement).value
-  const bandKey = (document.getElementById("s-range") as HTMLSelectElement).value
-  const ops = OP_SETS[opsKey]
-  const band = TARGET_BANDS[bandKey]
+function runSampleStream(): void {
+  stopSampleStream()
+  const operatorSetKey = (document.getElementById("s-ops") as HTMLSelectElement).value
+  const rangeKey = (document.getElementById("s-range") as HTMLSelectElement).value
+  const operators = OPERATOR_SETS[operatorSetKey]
+  const valueRange = TARGET_VALUE_RANGES[rangeKey]
   refreshSamplerStats()
 
-  const stream = document.getElementById("s-stream")!
-  stream.innerHTML = ""
+  const streamElement = document.getElementById("s-stream")!
+  streamElement.innerHTML = ""
   let attemptCount = 0
   const MAX_ATTEMPTS = 60
-  streamTimer = setInterval(() => {
+  streamIntervalId = setInterval(() => {
     attemptCount++
-    const expr = genExpression(ops)
-    const verdict = classify(expr, ops, band)
+    const expression = generateRandomExpression(operators)
+    const verdict = classifyExpression(expression, valueRange)
     const row = document.createElement("div")
-    row.className = "ex-attempt " + (verdict.ok ? "is-ok" : "is-bad")
+    row.className = "ex-attempt " + (verdict.accepted ? "is-ok" : "is-bad")
     row.innerHTML = `
       <div class="ex-attempt-num">#${attemptCount}</div>
-      <div class="ex-attempt-expr">${fmtExpr(expr)}</div>
-      <div class="ex-attempt-val">= ${Number.isFinite(verdict.val) ? (Number.isInteger(verdict.val) ? verdict.val : verdict.val.toFixed(2)) : "NaN"}</div>
+      <div class="ex-attempt-expr">${formatExpression(expression)}</div>
+      <div class="ex-attempt-val">= ${Number.isFinite(verdict.value) ? (Number.isInteger(verdict.value) ? verdict.value : verdict.value.toFixed(2)) : "NaN"}</div>
       <div class="ex-attempt-reason">${verdict.reason}</div>
     `
-    stream.appendChild(row)
-    stream.scrollTop = stream.scrollHeight
-    if (verdict.ok) {
-      stopStream()
+    streamElement.appendChild(row)
+    streamElement.scrollTop = streamElement.scrollHeight
+    if (verdict.accepted) {
+      stopSampleStream()
     } else if (attemptCount >= MAX_ATTEMPTS) {
-      stopStream()
+      stopSampleStream()
       const note = document.createElement("div")
       note.className = "ex-attempt is-bad"
       note.style.gridTemplateColumns = "1fr"
       note.textContent = `…gave up after ${MAX_ATTEMPTS} attempts. Loosen the band or simplify operators.`
-      stream.appendChild(note)
+      streamElement.appendChild(note)
     }
   }, reducedMotion ? 30 : 90)
 }
 
-export function initSampler(): void {
+export function initRejectionSampler(): void {
   // Bind sampler controls
   ["s-ops", "s-range"].forEach((id) =>
     document.getElementById(id)!.addEventListener("change", () => refreshSamplerStats())
   )
-  document.getElementById("s-run")!.addEventListener("click", runStream)
+  document.getElementById("s-run")!.addEventListener("click", runSampleStream)
   refreshSamplerStats()
 
   // Populate narrow-band deep dive
-  const band = TARGET_BANDS.narrow
-  const ops = OP_SETS.all
-  let total = 0, accepted = 0
-  for (let i = 1; i <= 15; i++) {
-    for (let j = 1; j <= 15; j++) {
-      if (j === i) continue
-      for (let k = 1; k <= 15; k++) {
-        if (k === i || k === j) continue
-        for (const firstOp of ops) {
-          for (const secondOp of ops) {
-            total++
-            if (classify({ a: i, b: j, c: k, firstOp, secondOp }, ops, band).ok) accepted++
+  const valueRange = TARGET_VALUE_RANGES.narrow
+  const operators = OPERATOR_SETS.all
+  let totalCount = 0, acceptedCount = 0
+  for (let a = 1; a <= 15; a++) {
+    for (let b = 1; b <= 15; b++) {
+      if (b === a) continue
+      for (let c = 1; c <= 15; c++) {
+        if (c === a || c === b) continue
+        for (const firstOperator of operators) {
+          for (const secondOperator of operators) {
+            totalCount++
+            if (classifyExpression({ operandA: a, operandB: b, operandC: c, firstOperator, secondOperator }, valueRange).accepted) acceptedCount++
           }
         }
       }
     }
   }
-  const prob = accepted / total
-  document.getElementById("d3-narrow-p")!.textContent = fmtPct(prob)
-  document.getElementById("d3-narrow-exp")!.textContent = fmtExpected(prob)
-  document.getElementById("d3-narrow-fail")!.textContent = fmtFail(prob)
+  const probability = acceptedCount / totalCount
+  document.getElementById("d3-narrow-p")!.textContent = formatPercent(probability)
+  document.getElementById("d3-narrow-exp")!.textContent = formatExpectedAttempts(probability)
+  document.getElementById("d3-narrow-fail")!.textContent = formatFailureProbability(probability)
 }

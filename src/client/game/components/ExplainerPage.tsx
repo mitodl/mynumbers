@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate } from "../router"
 import { initCarousel } from "../../explainer/carousel"
-import { initSampler } from "../../explainer/sampler"
+import { initRejectionSampler } from "../../explainer/sampler"
 import { initPerms } from "../../explainer/perms"
 import { ExplainerContainer, ExplainerGlobalStyles } from "./ExplainerStyles"
 
@@ -10,7 +10,7 @@ export function ExplainerPage() {
 
   useEffect(() => {
     document.body.classList.add("explainer-mode")
-    initSampler()
+    initRejectionSampler()
     initPerms()
     const disposeCarousel = initCarousel()
 
