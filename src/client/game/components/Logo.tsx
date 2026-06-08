@@ -17,7 +17,7 @@ const LogoBanner = styled.h1`
     width: min(560px, 95vw);
   }
 
-  body.menu-mode & svg {
+  .menu-mode & svg {
     width: min(720px, 95vw);
   }
 `

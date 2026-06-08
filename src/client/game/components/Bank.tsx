@@ -103,12 +103,8 @@ function BankTile({ item }: { item: { id: string; value: number } }) {
     <BankChip
       draggable
       onDragStart={(e) => {
-        document.body.classList.add("dragging")
         e.dataTransfer.effectAllowed = "move"
         e.dataTransfer.setData("text/plain", item.id)
-      }}
-      onDragEnd={() => {
-        document.body.classList.remove("dragging")
       }}
       onClick={handleClick}
     >

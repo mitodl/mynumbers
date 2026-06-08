@@ -780,9 +780,6 @@ function drawDoodle(context: CanvasRenderingContext2D, doodle: Doodle, timestamp
 
 // ── Orchestration ─────────────────────────────────────────────────────────────
 export function showHomeLightboard(): void {
-  const section = document.getElementById("home-lightboard-section")
-  if (section) section.style.display = ""
-
   if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null }
   if (mutationTimer) { clearTimeout(mutationTimer); mutationTimer = null }
   currentStar = null; currentFirework = null; stars = []; animationStartTimestamp = null
@@ -923,8 +920,6 @@ export function showHomeLightboard(): void {
 }
 
 export function hideHomeLightboard(): void {
-  const section = document.getElementById("home-lightboard-section")
-  if (section) section.style.display = "none"
   if (animationFrameId) { cancelAnimationFrame(animationFrameId); animationFrameId = null }
   if (mutationTimer) { clearTimeout(mutationTimer); mutationTimer = null }
   currentStar = null

@@ -27,7 +27,7 @@ const Section = styled.div`
   margin-bottom: 50px;
 
   @media (max-width: 600px) {
-    body.menu-mode & {
+    .menu-mode & {
       margin-top: 10px;
     }
   }
@@ -95,6 +95,19 @@ const Surface = styled.div`
   overflow: hidden;
 `
 
+const EquationLine = styled.div`
+  position: absolute;
+  font-family: 'Caveat', cursive;
+  font-size: clamp(16px, 4.5vw, 34px);
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1;
+  padding: 0.4em 24px 0.3em 0;
+  clip-path: inset(0 100% 0 0);
+  animation: lb-write-in-eq 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+`
+
+
 const writeIn = keyframes`
   0%   { clip-path: inset(0 100% 0 0); }
   100% { clip-path: inset(0 -40px 0 0); }
@@ -125,39 +138,9 @@ interface LightboardProps {
 }
 
 export function Lightboard({ equations }: LightboardProps) {
-  const surfaceRef = useRef<HTMLDivElement>(null)
   const shuffledZonesRef = useRef<number[][]>(
     [...LIGHTBOARD_ZONES].sort(() => Math.random() - 0.5)
   )
-
-  useEffect(() => {
-    if (!surfaceRef.current) return
-    surfaceRef.current.innerHTML = ""
-
-    equations.forEach((expr, i) => {
-      const zone = shuffledZonesRef.current[i % shuffledZonesRef.current.length]
-      const palette = LIGHTBOARD_COLORS[i % LIGHTBOARD_COLORS.length]
-
-      const el = document.createElement("div")
-      el.style.position = "absolute"
-      el.style.fontFamily = "'Caveat', cursive"
-      el.style.fontSize = "clamp(16px, 4.5vw, 34px)"
-      el.style.fontWeight = "600"
-      el.style.whiteSpace = "nowrap"
-      el.style.lineHeight = "1"
-      el.style.padding = "0.4em 24px 0.3em 0"
-      el.style.clipPath = "inset(0 100% 0 0)"
-      el.style.animation = "lb-write-in-eq 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards"
-      el.textContent = expr + "\u00A0"
-      el.dataset.expr = expr
-      el.style.left = zone[0] + "%"
-      el.style.top = zone[1] + "%"
-      el.style.color = palette.color
-      el.style.textShadow = `0 0 8px ${palette.glow}, 0 0 18px ${palette.glow}`
-
-      surfaceRef.current!.appendChild(el)
-    })
-  }, [equations])
 
   return (
     <Section>
@@ -166,7 +149,25 @@ export function Lightboard({ equations }: LightboardProps) {
         alt="Tim"
       />
       <Board>
-        <Surface ref={surfaceRef} />
+        <Surface>
+          {equations.map((expr, i) => {
+            const zone = shuffledZonesRef.current[i % shuffledZonesRef.current.length]
+            const palette = LIGHTBOARD_COLORS[i % LIGHTBOARD_COLORS.length]
+            return (
+              <EquationLine
+                key={i}
+                style={{
+                  left: zone[0] + "%",
+                  top: zone[1] + "%",
+                  color: palette.color,
+                  textShadow: `0 0 8px ${palette.glow}, 0 0 18px ${palette.glow}`,
+                }}
+              >
+                {expr + "\u00A0"}
+              </EquationLine>
+            )
+          })}
+        </Surface>
       </Board>
     </Section>
   )

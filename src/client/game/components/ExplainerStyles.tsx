@@ -29,7 +29,7 @@ export const ExplainerGlobalStyles = () => (
     styles={css`
       @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fredoka+One&family=Patrick+Hand&family=Architects+Daughter&family=Kalam:wght@400;700&display=swap');
 
-      body.explainer-mode {
+      body {
         background: #e8e8e8;
       }
     `}

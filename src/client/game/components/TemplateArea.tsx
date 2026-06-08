@@ -21,7 +21,7 @@ const TemplateWrapper = styled.div`
   user-select: none;
   -webkit-touch-callout: none;
 
-  body.menu-mode & {
+  .menu-mode & {
     margin-bottom: 0;
   }
 

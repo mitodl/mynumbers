@@ -45,7 +45,7 @@ const ExplainerLinkRow = styled.div`
   text-align: center;
   margin: 16px 0;
 
-  body.menu-mode & {
+  .menu-mode & {
     display: block;
   }
 
@@ -95,15 +95,6 @@ export function App() {
 
   const isRush = state.mode === "rush3" || state.mode === "rush5"
   const prevSlotValuesRef = useRef(state.slotValues)
-
-  // Toggle body.menu-mode for CSS that targets it
-  useEffect(() => {
-    if (state.showMenu) {
-      document.body.classList.add("menu-mode")
-    } else {
-      document.body.classList.remove("menu-mode")
-    }
-  }, [state.showMenu])
 
   // Generate puzzle when mode starts
   const hasGenerated = useRef(false)
@@ -155,7 +146,7 @@ export function App() {
 
   if (state.showMenu) {
     return (
-      <Container>
+      <Container className="menu-mode">
         <Logo />
         <ModeSelector />
         <TemplateArea />
