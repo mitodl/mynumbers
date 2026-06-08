@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { reducedMotion } from "../../../explainer/motion"
+import { reducedMotion } from "./motion"
 
 interface TreeNode {
   id: string

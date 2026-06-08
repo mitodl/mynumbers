@@ -39,6 +39,11 @@ export default defineConfig({
         '@emotion/styled',
       ],
       output: {
+        // The library relies on client-only React features (hooks, Context,
+        // Emotion's internal createContext). Mark the whole bundle as a client
+        // module so it can be imported from React Server Components (e.g. the
+        // Next.js App Router) without "createContext is not a function" errors.
+        banner: '"use client";',
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',

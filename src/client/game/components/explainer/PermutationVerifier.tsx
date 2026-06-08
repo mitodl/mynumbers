@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { reducedMotion } from "../../../explainer/motion"
+import { reducedMotion } from "./motion"
 import { Drawer } from "./ExpressionTree"
 
 const BANK = [2, 3, 4, 5, 7, 8, 9]

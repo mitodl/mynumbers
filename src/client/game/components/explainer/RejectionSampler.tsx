@@ -3,7 +3,7 @@
 // ============================================================================
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { reducedMotion } from "../../../explainer/motion"
+import { reducedMotion } from "./motion"
 import { Drawer } from "./ExpressionTree"
 
 const TARGET_VALUE_RANGES: Record<string, [number, number]> = {
