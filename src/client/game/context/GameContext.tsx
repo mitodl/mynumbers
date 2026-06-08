@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, type Dispatch, type ReactNode } from "react"
+import { useState, useSyncExternalStore, type Dispatch, type ReactNode } from "react"
 import { type GameState, type GameAction, type BankItem } from "../types"
 
 export function calculateDifficulty(solved: number): number {
@@ -163,24 +163,48 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
-const GameStateContext = createContext<GameState>(initialState)
-const GameDispatchContext = createContext<Dispatch<GameAction>>(() => {})
+// ── Store ─────────────────────────────────────────────────────────────────────
+// A single module-level store replaces React Context. Components subscribe via
+// useSyncExternalStore, so reads stay reactive without a Provider tree.
+let currentState: GameState = initialState
+const listeners = new Set<() => void>()
+
+function emit(): void {
+  for (const listener of listeners) listener()
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
+function getSnapshot(): GameState {
+  return currentState
+}
+
+export function dispatch(action: GameAction): void {
+  const next = gameReducer(currentState, action)
+  if (next === currentState) return
+  currentState = next
+  emit()
+}
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(gameReducer, initialState)
-  return (
-    <GameStateContext.Provider value={state}>
-      <GameDispatchContext.Provider value={dispatch}>
-        {children}
-      </GameDispatchContext.Provider>
-    </GameStateContext.Provider>
-  )
+  // Reset to a fresh state when a provider mounts so each game session
+  // (and each test) starts clean, matching the old per-mount useReducer.
+  useState(() => {
+    currentState = initialState
+    return null
+  })
+  return <>{children}</>
 }
 
-export function useGameState() {
-  return useContext(GameStateContext)
+export function useGameState(): GameState {
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
 }
 
-export function useGameDispatch() {
-  return useContext(GameDispatchContext)
+export function useGameDispatch(): Dispatch<GameAction> {
+  return dispatch
 }
