@@ -126,14 +126,11 @@ export function App() {
     }
   }, [state.slotValues, state.rushIntroPlaying, checkPuzzle])
 
-  // Handle rush intro → show ready modal
+  // Handle rush intro → show ready modal immediately
   useEffect(() => {
     if (isRush && state.rushIntroPlaying && !state.rushStarted) {
-      const timeout = setTimeout(() => {
-        dispatch({ type: "SHOW_RUSH_READY_MODAL" })
-        dispatch({ type: "SET_RUSH_INTRO_PLAYING", playing: false })
-      }, 1500)
-      return () => clearTimeout(timeout)
+      dispatch({ type: "SHOW_RUSH_READY_MODAL" })
+      dispatch({ type: "SET_RUSH_INTRO_PLAYING", playing: false })
     }
   }, [isRush, state.rushIntroPlaying, state.rushStarted, dispatch])
 
@@ -160,26 +157,30 @@ export function App() {
     )
   }
 
+  const modalOpen = state.showRushReadyModal || state.showGameOverModal
+
   return (
     <Container>
-      <Logo />
+      <div inert={modalOpen ? true : undefined}>
+        <Logo />
 
-      {isRush && <RushStats />}
-      {state.mode === "practice" && <PracticeStats />}
+        {isRush && <RushStats />}
+        {state.mode === "practice" && <PracticeStats />}
 
-      {state.mode === "practice" && (
-        <HowToPlay>
-          <strong>How to play:</strong> Drag (or tap) numbers from the bank into
-          the empty slots to make the equation equal the <strong>Target</strong>.
-        </HowToPlay>
-      )}
+        {state.mode === "practice" && (
+          <HowToPlay>
+            <strong>How to play:</strong> Drag (or tap) numbers from the bank into
+            the empty slots to make the equation equal the <strong>Target</strong>.
+          </HowToPlay>
+        )}
 
-      <TemplateArea />
-      <Bank />
-      <Controls onNewPuzzle={generatePuzzle} onEndRush={endRush} />
-      <Result />
+        <TemplateArea />
+        <Bank />
+        <Controls onNewPuzzle={generatePuzzle} onEndRush={endRush} />
+        <Result />
 
-      {isRush && <Lightboard equations={equations} />}
+        {isRush && <Lightboard equations={equations} />}
+      </div>
 
       <RushReadyModal onStart={handleRushReady} />
       <GameOverModal onPlayAgain={playAgain} />

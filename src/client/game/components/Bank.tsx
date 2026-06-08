@@ -51,6 +51,11 @@ const BankChip = styled.div`
   -webkit-user-select: none;
   -webkit-touch-callout: none;
 
+  &:focus-visible {
+    outline: 3px solid #0f172a;
+    outline-offset: 2px;
+  }
+
   @media (max-width: 600px) {
     min-width: 38px;
     height: 38px;
@@ -101,12 +106,21 @@ function BankTile({ item }: { item: { id: string; value: number } }) {
 
   return (
     <BankChip
+      role="button"
+      tabIndex={0}
+      aria-label={`Place ${item.value} into the next empty slot`}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.effectAllowed = "move"
         e.dataTransfer.setData("text/plain", item.id)
       }}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
     >
       {item.value}
     </BankChip>

@@ -78,6 +78,11 @@ const SlotWrapper = styled.div`
   user-select: none;
   -webkit-touch-callout: none;
 
+  &:focus-visible {
+    outline: 3px solid #0f172a;
+    outline-offset: 2px;
+  }
+
   @media (max-width: 600px) {
     min-width: 32px;
     height: 32px;
@@ -120,6 +125,9 @@ function Slot({ index, tile, onDrop, onRemove }: SlotProps) {
   return (
     <SlotWrapper
       data-slot-index={index}
+      role={tile ? "button" : undefined}
+      tabIndex={tile ? 0 : undefined}
+      aria-label={tile ? `Remove ${tile.value} from slot ${index + 1}` : `Empty slot ${index + 1}`}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault()
@@ -128,6 +136,12 @@ function Slot({ index, tile, onDrop, onRemove }: SlotProps) {
       }}
       onClick={() => {
         if (tile) onRemove(index)
+      }}
+      onKeyDown={(e) => {
+        if (tile && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault()
+          onRemove(index)
+        }
       }}
     >
       {tile && (

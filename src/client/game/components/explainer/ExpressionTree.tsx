@@ -217,7 +217,16 @@ export function ExpressionTree({ active }: { active: boolean }) {
                   className={classes}
                   transform={`translate(${node.x}, ${node.y})`}
                   style={{ opacity: visible.has(node.id) ? 1 : 0 }}
+                  role="button"
+                  tabIndex={visible.has(node.id) ? 0 : -1}
+                  aria-label={`Evaluate subtree at ${nodeLabel(node)}`}
                   onClick={() => evaluateSubtree(node.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      evaluateSubtree(node.id)
+                    }
+                  }}
                 >
                   {/* key forces remount so the CSS pulse animation restarts on each trigger */}
                   <circle key={a ? a.key : "base"} r="22" />

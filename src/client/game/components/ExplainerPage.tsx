@@ -175,7 +175,7 @@ export function ExplainerPage() {
         >
           <div className="ex-track" id="ex-track" style={{ transform: `translateX(-${(current - 1) * 100}%)` }}>
             {/* Slide 1: Pipeline overview */}
-            <section className={slideClass(1)} data-slide="1" data-tone="neutral" aria-label="Slide 1: Pipeline overview">
+            <section className={slideClass(1)} data-slide="1" data-tone="neutral" aria-label="Slide 1: Pipeline overview" inert={current === 1 ? undefined : true}>
               <h2 className="ex-h">Follow one puzzle from random expression to playable challenge!</h2>
               <p className="ex-sub">
                 Every puzzle moves through four stages on the server before you ever see it. Tap a stage to jump there.
@@ -230,7 +230,7 @@ export function ExplainerPage() {
             </section>
 
             {/* Slide 2: Expression Trees */}
-            <section className={slideClass(2)} data-slide="2" data-tone="tree" aria-label="Slide 2: Expression trees">
+            <section className={slideClass(2)} data-slide="2" data-tone="tree" aria-label="Slide 2: Expression trees" inert={current === 2 ? undefined : true}>
               <div className="ex-row-head">
                 <h2 className="ex-h">A puzzle begins as a tree</h2>
                 <span className="ex-course-tag" data-course="cs">
@@ -246,7 +246,7 @@ export function ExplainerPage() {
             </section>
 
             {/* Slide 3: Rejection Sampling */}
-            <section className={slideClass(3)} data-slide="3" data-tone="prob" aria-label="Slide 3: Rejection sampling">
+            <section className={slideClass(3)} data-slide="3" data-tone="prob" aria-label="Slide 3: Rejection sampling" inert={current === 3 ? undefined : true}>
               <div className="ex-row-head">
                 <h2 className="ex-h">Most random expressions are rejected</h2>
                 <span className="ex-course-tag" data-course="prob">
@@ -263,7 +263,7 @@ export function ExplainerPage() {
             </section>
 
             {/* Slide 4: Permutation Verification */}
-            <section className={slideClass(4)} data-slide="4" data-tone="search" aria-label="Slide 4: Permutation verification">
+            <section className={slideClass(4)} data-slide="4" data-tone="search" aria-label="Slide 4: Permutation verification" inert={current === 4 ? undefined : true}>
               <div className="ex-row-head">
                 <h2 className="ex-h">Can the number bank actually solve the puzzle?</h2>
                 <span className="ex-course-tag" data-course="prob">
@@ -281,7 +281,7 @@ export function ExplainerPage() {
             </section>
 
             {/* Slide 5: MIT Learn */}
-            <section className={slideClass(5)} data-slide="5" data-tone="neutral" aria-label="Slide 5: MIT Learn connections">
+            <section className={slideClass(5)} data-slide="5" data-tone="neutral" aria-label="Slide 5: MIT Learn connections" inert={current === 5 ? undefined : true}>
               <h2 className="ex-h">Go further with MIT courses!</h2>
 
               <div className="ex-courses">
