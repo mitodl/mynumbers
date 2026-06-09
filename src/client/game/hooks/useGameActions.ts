@@ -111,7 +111,7 @@ export function useGameActions() {
     dispatch({
       type: "SET_RESULT",
       result: { text: `Result: ${evalDisplay}`, type: "" },
-  }, [state.puzzle, state.bankItems, state.slotValues, state.mode, state.puzzlesSolved, dispatch, generatePuzzle])
+    })
   }, [state, dispatch, generatePuzzle])
 
   const scheduleAutoCheck = useCallback(() => {

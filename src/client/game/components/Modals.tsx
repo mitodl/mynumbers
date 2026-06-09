@@ -1,6 +1,5 @@
 import { createPortal } from "react-dom"
 import styled from "@emotion/styled"
-import { keyframes } from "@emotion/react"
 import { useGameState, useGameDispatch } from "../context/GameContext"
 import timWaveUrl from "../assets/tim-wave.svg"
 import timFrontUrl from "../assets/tim-front.svg"
@@ -132,15 +131,6 @@ const ModalBtn = styled.button<{ $primary?: boolean }>`
   }
 `
 
-const FireworksCanvas = styled.canvas`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-`
-
 interface ModalsProps {
   onPlayAgain: () => void
 }
@@ -194,7 +184,6 @@ export function GameOverModal({ onPlayAgain }: ModalsProps) {
     <Overlay onClick={(e) => {
       if (e.target === e.currentTarget) handleDismiss()
     }}>
-      <FireworksCanvas id="fireworks-canvas" />
       <Box>
         <CloseBtn aria-label="Close" onClick={handleDismiss}>
           &#x2715;
