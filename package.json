@@ -1,5 +1,5 @@
 {
-  "name": "arythmix",
+  "name": "arithmix",
   "version": "0.2.0",
   "description": "Arithmetic puzzle game: combine given numbers to reach a target.",
   "main": "dist/server/server.js",

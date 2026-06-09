@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useGameState, useGameDispatch, calculateDifficulty } from "../context/GameContext"
 import { puzzleRush, puzzleCheck, type PuzzleOut, type CheckResult } from "../generator"
 import type { BankItem, Puzzle } from "../types"
@@ -7,6 +7,7 @@ export function useGameActions() {
   const state = useGameState()
   const dispatch = useGameDispatch()
   const autoCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const countdownTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const [equations, setEquations] = useState<string[]>([])
 
   const generatePuzzle = useCallback(() => {
@@ -132,23 +133,31 @@ export function useGameActions() {
   }, [])
 
   const startCountdown = useCallback(() => {
+    // Clear any timeouts left over from a previous countdown.
+    countdownTimeoutsRef.current.forEach(clearTimeout)
+    countdownTimeoutsRef.current = []
+
     dispatch({ type: "SHOW_COUNTDOWN" })
     let count = 3
 
     function tick() {
       dispatch({ type: "SET_COUNTDOWN_NUMBER", value: count })
       if (count === 1) {
-        setTimeout(() => {
-          dispatch({ type: "SET_COUNTDOWN_NUMBER", value: "GO!" })
+        countdownTimeoutsRef.current.push(
           setTimeout(() => {
-            dispatch({ type: "HIDE_COUNTDOWN" })
-            dispatch({ type: "SET_RUSH_STARTED", started: true })
-          }, 700)
-        }, 750)
+            dispatch({ type: "SET_COUNTDOWN_NUMBER", value: "GO!" })
+            countdownTimeoutsRef.current.push(
+              setTimeout(() => {
+                dispatch({ type: "HIDE_COUNTDOWN" })
+                dispatch({ type: "SET_RUSH_STARTED", started: true })
+              }, 700),
+            )
+          }, 750),
+        )
         return
       }
       count--
-      setTimeout(tick, 750)
+      countdownTimeoutsRef.current.push(setTimeout(tick, 750))
     }
     tick()
   }, [dispatch])
@@ -164,6 +173,19 @@ export function useGameActions() {
     const was3 = state.mode === "rush3"
     dispatch({ type: "START_RUSH", minutes: was3 ? 3 : 5, skipIntro: true })
   }, [dispatch, state.mode])
+
+  // Clear any pending timeouts on unmount to avoid state updates after the
+  // component is gone (e.g. navigating back to the menu mid-countdown).
+  useEffect(() => {
+    return () => {
+      countdownTimeoutsRef.current.forEach(clearTimeout)
+      countdownTimeoutsRef.current = []
+      if (autoCheckRef.current) {
+        clearTimeout(autoCheckRef.current)
+        autoCheckRef.current = null
+      }
+    }
+  }, [])
 
   return {
     generatePuzzle,
