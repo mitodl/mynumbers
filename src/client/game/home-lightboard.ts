@@ -74,7 +74,7 @@ function pickTextStyle(text: string): { family: string; weight: number; size: nu
   const maxSize = Math.floor((text.length > 15 ? 25 : text.length > 11 ? 30 : 36) * scale)
   const allowedSizes = FONT_SIZE_OPTIONS.filter(size => size <= maxSize)
   const size = allowedSizes.length ? allowedSizes[Math.floor(Math.random() * allowedSizes.length)] : FONT_SIZE_OPTIONS[0]
-  const plainText = text.replace(/<[^>]+>/g, "")
+  const plainText = text.replace(/[<>]/g, "")
   measureContext.font = `${font.weight} ${size}px ${font.family}`
   const widthPct = (measureContext.measureText(plainText).width + 12) / boardWidth * 100
   const heightPct = (size * 1.75) / boardHeight * 100

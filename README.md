@@ -47,7 +47,7 @@ dependencies that the host app provides.
 React host:
 
 ```tsx
-import { Arithmix, GamePage, ExplainerPage } from "arythmix"
+import { Arithmix, GamePage, ExplainerPage } from "arithmix"
 
 // Full app with built-in routing between the game and explainer:
 <Arithmix />

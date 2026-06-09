@@ -52,7 +52,6 @@ export function FitToViewport({ children }: { children: ReactNode }) {
 
     const ro = new ResizeObserver(measure)
     ro.observe(scaler)
-    ro.observe(document.body)
     window.addEventListener("resize", measure)
     measure()
 

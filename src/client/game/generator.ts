@@ -218,27 +218,98 @@ function generatePermutations<T>(items: T[], selectionSize: number): T[][] {
 
 function isTemplateSolvable(templateTokens: string[], availableNumbers: number[], target: number): boolean {
   const slotCount = templateTokens.filter(token => token.startsWith('{')).length
-  const allPermutations = generatePermutations(availableNumbers, slotCount)
 
+  // Parse the fixed template structure once into an AST whose leaves are slot
+  // references. Each permutation is then a cheap tree evaluation instead of a
+  // fresh string build + tokenize + parse.
+  let templateAst: TemplateNode
+  try {
+    templateAst = parseTemplateTokens(templateTokens)
+  } catch {
+    return false
+  }
+
+  const allPermutations = generatePermutations(availableNumbers, slotCount)
   for (const permutation of allPermutations) {
-    let expressionString = ''
-    let slotIndex = 0
-    for (const token of templateTokens) {
-      if (token.startsWith('{')) {
-        expressionString += String(permutation[slotIndex])
-        slotIndex++
-      } else {
-        expressionString += token
-      }
-    }
     try {
-      const evaluatedResult = parseAndEvaluateExpression(expressionString)
+      const evaluatedResult = evaluateTemplateNode(templateAst, permutation)
       if (evaluatedResult[0] === target && evaluatedResult[1] === 1) return true
     } catch {
       continue
     }
   }
   return false
+}
+
+// Slot leaves reference a permutation index (in left-to-right slot order);
+// internal nodes are [left, operator, right].
+type TemplateNode = { slot: number } | [TemplateNode, string, TemplateNode]
+
+// Recursive-descent parse of the template tokens (slots, operators, parens)
+// into a TemplateNode tree. Mirrors the precedence of parseAndEvaluateExpression.
+function parseTemplateTokens(tokens: string[]): TemplateNode {
+  let position = 0
+  let nextSlot = 0
+
+  function peekToken(): string | undefined { return tokens[position] }
+  function consumeToken(): string { return tokens[position++] }
+
+  function parseAdditionSubtraction(): TemplateNode {
+    let leftNode = parseMultiplicationDivision()
+    while (position < tokens.length && (peekToken() === '+' || peekToken() === '-')) {
+      const operator = consumeToken()
+      const rightNode = parseMultiplicationDivision()
+      leftNode = [leftNode, operator, rightNode]
+    }
+    return leftNode
+  }
+
+  function parseMultiplicationDivision(): TemplateNode {
+    let leftNode = parseAtom()
+    while (position < tokens.length && (peekToken() === '*' || peekToken() === '/')) {
+      const operator = consumeToken()
+      const rightNode = parseAtom()
+      leftNode = [leftNode, operator, rightNode]
+    }
+    return leftNode
+  }
+
+  function parseAtom(): TemplateNode {
+    const token = peekToken()
+    if (token === '(') {
+      consumeToken()
+      const node = parseAdditionSubtraction()
+      if (peekToken() !== ')') throw new Error('Mismatched parentheses')
+      consumeToken()
+      return node
+    }
+    if (token !== undefined && token.startsWith('{')) {
+      consumeToken()
+      return { slot: nextSlot++ }
+    }
+    throw new Error(`Unexpected token: ${token}`)
+  }
+
+  const node = parseAdditionSubtraction()
+  if (position < tokens.length) throw new Error('Unexpected trailing tokens')
+  return node
+}
+
+// Evaluate a pre-parsed template tree against a permutation of slot values.
+function evaluateTemplateNode(node: TemplateNode, slotValues: number[]): Fraction {
+  if (Array.isArray(node)) {
+    const [leftNode, operator, rightNode] = node
+    const leftValue = evaluateTemplateNode(leftNode, slotValues)
+    const rightValue = evaluateTemplateNode(rightNode, slotValues)
+    switch (operator) {
+      case '+': return addFractions(leftValue, rightValue)
+      case '-': return subtractFractions(leftValue, rightValue)
+      case '*': return multiplyFractions(leftValue, rightValue)
+      case '/': return divideFractions(leftValue, rightValue)
+      default: throw new Error('Unknown operator')
+    }
+  }
+  return [slotValues[node.slot], 1]
 }
 
 // ============================================================================
