@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { useGameState, useGameDispatch } from "../context/GameContext"
@@ -150,7 +151,7 @@ export function RushReadyModal({ onStart }: { onStart: () => void }) {
 
   if (!showRushReadyModal) return null
 
-  return (
+  return createPortal(
     <Overlay>
       <Box>
         <h2>Ready to Rush?</h2>
@@ -170,7 +171,8 @@ export function RushReadyModal({ onStart }: { onStart: () => void }) {
           </ModalBtn>
         </Buttons>
       </Box>
-    </Overlay>
+    </Overlay>,
+    document.body,
   )
 }
 
@@ -188,7 +190,7 @@ export function GameOverModal({ onPlayAgain }: ModalsProps) {
     dispatch({ type: "HIDE_GAME_OVER_MODAL" })
   }
 
-  return (
+  return createPortal(
     <Overlay onClick={(e) => {
       if (e.target === e.currentTarget) handleDismiss()
     }}>
@@ -214,6 +216,7 @@ export function GameOverModal({ onPlayAgain }: ModalsProps) {
           </ModalBtn>
         </Buttons>
       </Box>
-    </Overlay>
+    </Overlay>,
+    document.body,
   )
 }

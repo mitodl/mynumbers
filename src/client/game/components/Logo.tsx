@@ -14,10 +14,6 @@ const LogoBanner = styled.h1`
     max-width: 100%;
     height: auto;
     display: block;
-    width: min(560px, 95vw);
-  }
-
-  .menu-mode & svg {
     width: min(720px, 95vw);
   }
 `

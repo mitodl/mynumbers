@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useNavigate } from "../router"
 import { ExplainerContainer, ExplainerGlobalStyles } from "./ExplainerStyles"
+import { FitToViewport } from "./FitToViewport"
 import { ExpressionTree } from "./explainer/ExpressionTree"
 import { RejectionSampler } from "./explainer/RejectionSampler"
 import { PermutationVerifier } from "./explainer/PermutationVerifier"
@@ -100,7 +101,8 @@ export function ExplainerPage() {
   return (
     <>
       <ExplainerGlobalStyles />
-      <ExplainerContainer>
+      <FitToViewport>
+        <ExplainerContainer>
         {/* Top bar */}
         <header className="ex-topbar" aria-label="Explainer navigation">
           <button className="ex-back" aria-label="Back to game" onClick={goHome}>
@@ -388,7 +390,8 @@ export function ExplainerPage() {
             Next →
           </button>
         </nav>
-      </ExplainerContainer>
+        </ExplainerContainer>
+      </FitToViewport>
     </>
   )
 }

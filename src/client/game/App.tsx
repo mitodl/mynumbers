@@ -12,6 +12,7 @@ import { Result } from "./components/Result"
 import { Lightboard, HomeLightboard } from "./components/Lightboard"
 import { RushReadyModal, GameOverModal } from "./components/Modals"
 import { Countdown } from "./components/Countdown"
+import { FitToViewport } from "./components/FitToViewport"
 import { useTimer } from "./hooks/useTimer"
 import { useGameActions } from "./hooks/useGameActions"
 
@@ -143,48 +144,52 @@ export function App() {
 
   if (state.showMenu) {
     return (
-      <Container className="menu-mode">
-        <Logo />
-        <ModeSelector />
-        <TemplateArea />
-        <ExplainerLinkRow>
-          <ExplainerLink to="/arithmix/explainer">
-            Inside <span>ARITHMIX</span>
-          </ExplainerLink>
-        </ExplainerLinkRow>
-        <HomeLightboard />
-      </Container>
+      <FitToViewport>
+        <Container className="menu-mode">
+          <Logo />
+          <ModeSelector />
+          <TemplateArea />
+          <ExplainerLinkRow>
+            <ExplainerLink to="/arithmix/explainer">
+              Inside <span>ARITHMIX</span>
+            </ExplainerLink>
+          </ExplainerLinkRow>
+          <HomeLightboard />
+        </Container>
+      </FitToViewport>
     )
   }
 
   const modalOpen = state.showRushReadyModal || state.showGameOverModal
 
   return (
-    <Container>
-      <div inert={modalOpen ? true : undefined}>
-        <Logo />
+    <FitToViewport>
+      <Container>
+        <div inert={modalOpen ? true : undefined}>
+          <Logo />
 
-        {isRush && <RushStats />}
-        {state.mode === "practice" && <PracticeStats />}
+          {isRush && <RushStats />}
+          {state.mode === "practice" && <PracticeStats />}
 
-        {state.mode === "practice" && (
-          <HowToPlay>
-            <strong>How to play:</strong> Drag (or tap) numbers from the bank into
-            the empty slots to make the equation equal the <strong>Target</strong>.
-          </HowToPlay>
-        )}
+          {state.mode === "practice" && (
+            <HowToPlay>
+              <strong>How to play:</strong> Drag (or tap) numbers from the bank into
+              the empty slots to make the equation equal the <strong>Target</strong>.
+            </HowToPlay>
+          )}
 
-        <TemplateArea />
-        <Bank />
-        <Controls onNewPuzzle={generatePuzzle} onEndRush={endRush} />
-        <Result />
+          <TemplateArea />
+          <Bank />
+          <Controls onNewPuzzle={generatePuzzle} onEndRush={endRush} />
+          <Result />
 
-        {isRush && <Lightboard equations={equations} />}
-      </div>
+          {isRush && <Lightboard equations={equations} />}
+        </div>
 
-      <RushReadyModal onStart={handleRushReady} />
-      <GameOverModal onPlayAgain={playAgain} />
-      <Countdown />
-    </Container>
+        <RushReadyModal onStart={handleRushReady} />
+        <GameOverModal onPlayAgain={playAgain} />
+        <Countdown />
+      </Container>
+    </FitToViewport>
   )
 }

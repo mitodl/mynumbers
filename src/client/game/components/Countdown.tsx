@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { useGameState } from "../context/GameContext"
@@ -32,9 +33,10 @@ export function Countdown() {
 
   if (!showCountdown) return null
 
-  return (
+  return createPortal(
     <Overlay>
       <Number key={countdownNumber}>{countdownNumber}</Number>
-    </Overlay>
+    </Overlay>,
+    document.body,
   )
 }
