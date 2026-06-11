@@ -164,7 +164,6 @@ export function useGameActions() {
 
   const handleRushReady = useCallback(() => {
     dispatch({ type: "HIDE_RUSH_READY_MODAL" })
-    dispatch({ type: "SET_RUSH_STARTED", started: true })
     dispatch({ type: "SET_RUSH_INTRO_PLAYING", playing: false })
   }, [dispatch])
 

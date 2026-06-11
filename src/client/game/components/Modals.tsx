@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom"
+import { useEffect, useRef, type ReactNode } from "react"
 import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "../context/GameContext"
 import timWaveUrl from "../assets/tim-wave.svg"
@@ -135,34 +136,106 @@ interface ModalsProps {
   onPlayAgain: () => void
 }
 
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+
+function ModalDialog({
+  labelledBy,
+  onDismiss,
+  dismissOnBackdrop = false,
+  children,
+}: {
+  labelledBy: string
+  onDismiss?: () => void
+  dismissOnBackdrop?: boolean
+  children: ReactNode
+}) {
+  const boxRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const box = boxRef.current
+
+    const firstFocusable = box?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)
+    ;(firstFocusable ?? box)?.focus()
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && onDismiss) {
+        e.preventDefault()
+        onDismiss()
+        return
+      }
+      if (e.key !== "Tab" || !box) return
+      const items = Array.from(
+        box.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ).filter(el => el.offsetParent !== null)
+      if (items.length === 0) {
+        e.preventDefault()
+        return
+      }
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+      // Restore focus to whatever was focused before the dialog opened.
+      previouslyFocused?.focus?.()
+    }
+  }, [onDismiss])
+
+  return createPortal(
+    <Overlay
+      onClick={
+        dismissOnBackdrop && onDismiss
+          ? (e) => {
+              if (e.target === e.currentTarget) onDismiss()
+            }
+          : undefined
+      }
+    >
+      <Box ref={boxRef} role="dialog" aria-modal="true" aria-labelledby={labelledBy} tabIndex={-1}>
+        {children}
+      </Box>
+    </Overlay>,
+    document.body,
+  )
+}
+
 export function RushReadyModal({ onStart }: { onStart: () => void }) {
   const { showRushReadyModal } = useGameState()
   const dispatch = useGameDispatch()
 
   if (!showRushReadyModal) return null
 
-  return createPortal(
-    <Overlay>
-      <Box>
-        <h2>Ready to Rush?</h2>
-        <Desc>
-          Arrange the numbers to hit the <strong>Target</strong>. Solve as many
-          puzzles as you can before time runs out!
-        </Desc>
-        <Buttons>
-          <ModalBtn
-            $primary
-            onClick={() => {
-              dispatch({ type: "HIDE_RUSH_READY_MODAL" })
-              onStart()
-            }}
-          >
-            Let&apos;s Go!
-          </ModalBtn>
-        </Buttons>
-      </Box>
-    </Overlay>,
-    document.body,
+  return (
+    <ModalDialog labelledBy="rush-ready-title">
+      <h2 id="rush-ready-title">Ready to Rush?</h2>
+      <Desc>
+        Arrange the numbers to hit the <strong>Target</strong>. Solve as many
+        puzzles as you can before time runs out!
+      </Desc>
+      <Buttons>
+        <ModalBtn
+          $primary
+          onClick={() => {
+            dispatch({ type: "HIDE_RUSH_READY_MODAL" })
+            onStart()
+          }}
+        >
+          Let&apos;s Go!
+        </ModalBtn>
+      </Buttons>
+    </ModalDialog>
   )
 }
 
@@ -180,32 +253,27 @@ export function GameOverModal({ onPlayAgain }: ModalsProps) {
     dispatch({ type: "HIDE_GAME_OVER_MODAL" })
   }
 
-  return createPortal(
-    <Overlay onClick={(e) => {
-      if (e.target === e.currentTarget) handleDismiss()
-    }}>
-      <Box>
-        <CloseBtn aria-label="Close" onClick={handleDismiss}>
-          &#x2715;
-        </CloseBtn>
-        <TimImg src={timSrc} alt="Tim" />
-        <h2>Rush Complete!</h2>
-        <ModalStats>
-          <ModalStat>
-            <ModalStatValue>{puzzlesSolved}</ModalStatValue>
-            <ModalStatLabel>Puzzles Solved</ModalStatLabel>
-          </ModalStat>
-        </ModalStats>
-        <Buttons>
-          <ModalBtn $primary onClick={onPlayAgain}>
-            Play Again
-          </ModalBtn>
-          <ModalBtn onClick={() => dispatch({ type: "SHOW_MENU" })}>
-            Back to Menu
-          </ModalBtn>
-        </Buttons>
-      </Box>
-    </Overlay>,
-    document.body,
+  return (
+    <ModalDialog labelledBy="game-over-title" onDismiss={handleDismiss} dismissOnBackdrop>
+      <CloseBtn aria-label="Close" onClick={handleDismiss}>
+        &#x2715;
+      </CloseBtn>
+      <TimImg src={timSrc} alt="Tim" />
+      <h2 id="game-over-title">Rush Complete!</h2>
+      <ModalStats>
+        <ModalStat>
+          <ModalStatValue>{puzzlesSolved}</ModalStatValue>
+          <ModalStatLabel>Puzzles Solved</ModalStatLabel>
+        </ModalStat>
+      </ModalStats>
+      <Buttons>
+        <ModalBtn $primary onClick={onPlayAgain}>
+          Play Again
+        </ModalBtn>
+        <ModalBtn onClick={() => dispatch({ type: "SHOW_MENU" })}>
+          Back to Menu
+        </ModalBtn>
+      </Buttons>
+    </ModalDialog>
   )
 }
