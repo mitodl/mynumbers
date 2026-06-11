@@ -35,7 +35,7 @@ export function ExplainerPage() {
     }
   }, [])
 
-  const goHome = useCallback(() => navigate("/arithmix"), [navigate])
+  const goHome = useCallback(() => navigate("/"), [navigate])
 
   // Clear the transient "jumped" highlight after it has played.
   useEffect(() => {
@@ -351,7 +351,7 @@ export function ExplainerPage() {
                 <a className="ex-cta ex-cta-primary" href="https://learn.mit.edu" target="_blank" rel="noopener">
                   Explore Courses
                 </a>
-                <button className="ex-cta ex-cta-secondary" onClick={() => navigate("/arithmix")}>
+                <button className="ex-cta ex-cta-secondary" onClick={() => navigate("/")}>
                   Play ARITHMIX →
                 </button>
               </div>

@@ -17,21 +17,23 @@ import { ExplainerPage as ExplainerPageInner } from "../game/components/Explaine
  * Full self-contained app: the game at "/arithmix" and the explainer at "/arithmix/explainer",
  * wired together with the built-in router. Drop this in and the in-app links
  * (e.g. "How it works") navigate between the two pages automatically.
+ *
+ * Pass a different `basename` if the host mounts it under another URL prefix.
  */
-export function Arithmix(): ReactElement {
+export function Arithmix({ basename = "/arithmix" }: { basename?: string } = {}): ReactElement {
   return (
-    <Router initialPath="/arithmix">
+    <Router syncWithHistory basename={basename}>
       <GlobalStyles />
       <Routes>
         <Route
-          path="/arithmix"
+          path="/"
           element={
             <GameProvider>
               <App />
             </GameProvider>
           }
         />
-        <Route path="/arithmix/explainer" element={<ExplainerPageInner />} />
+        <Route path="/explainer" element={<ExplainerPageInner />} />
       </Routes>
     </Router>
   )

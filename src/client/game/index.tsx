@@ -12,12 +12,12 @@ root.render(
   <Router syncWithHistory>
     <GlobalStyles />
     <Routes>
-      <Route path="/arithmix" element={
+      <Route path="/" element={
         <GameProvider>
           <App />
         </GameProvider>
       } />
-      <Route path="/arithmix/explainer" element={
+      <Route path="/explainer" element={
         <Suspense fallback={<div />}>
           <ExplainerPage />
         </Suspense>

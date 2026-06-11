@@ -3,21 +3,44 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode,
 interface RouterContextValue {
   path: string
   navigate: (to: string) => void
+  basename: string
 }
 
 const RouterContext = createContext<RouterContextValue>({
   path: "/",
   navigate: () => {},
+  basename: "",
 })
+
+/** Join a basename with an app-relative path, e.g. ("/arithmix", "/explainer") -> "/arithmix/explainer". */
+function withBasename(basename: string, to: string): string {
+  if (!basename) return to
+  return `${basename}${to === "/" ? "" : to}` || "/"
+}
+
+/** Strip a basename from an absolute pathname, returning the app-relative path. */
+function stripBasename(pathname: string, basename: string): string {
+  if (!basename) return pathname
+  if (pathname === basename) return "/"
+  if (pathname.startsWith(`${basename}/`)) return pathname.slice(basename.length)
+  return pathname
+}
 
 interface RouterProps {
   children: ReactNode
   /**
-   * Starting path. In the default (embedding-safe) mode this is the initial
-   * in-memory route. When `syncWithHistory` is set it overrides the initial
-   * read of `window.location.pathname`.
+   * Starting app-relative path. In the default (embedding-safe) mode this is
+   * the initial in-memory route. When `syncWithHistory` is set the initial
+   * path is read from the URL instead and this is ignored.
    */
   initialPath?: string
+  /**
+   * URL prefix the app lives under when `syncWithHistory` is enabled, e.g.
+   * "/arithmix". Route paths and navigation targets are always app-relative
+   * ("/", "/explainer"); the basename is only used to read/write the browser
+   * URL. Ignored in the default in-memory mode.
+   */
+  basename?: string
   /**
    * When true the router reads from and writes to `window.location`/history,
    * for use as a standalone app that owns the page URL. When false (default)
@@ -27,27 +50,32 @@ interface RouterProps {
   syncWithHistory?: boolean
 }
 
-export function Router({ children, initialPath = "/", syncWithHistory = false }: RouterProps) {
+export function Router({
+  children,
+  initialPath = "/",
+  basename = "",
+  syncWithHistory = false,
+}: RouterProps) {
   const [path, setPath] = useState(() =>
-    syncWithHistory ? window.location.pathname : initialPath
+    syncWithHistory ? stripBasename(window.location.pathname, basename) : initialPath
   )
 
   useEffect(() => {
     if (!syncWithHistory) return
-    const onPop = () => setPath(window.location.pathname)
+    const onPop = () => setPath(stripBasename(window.location.pathname, basename))
     window.addEventListener("popstate", onPop)
     return () => window.removeEventListener("popstate", onPop)
-  }, [syncWithHistory])
+  }, [syncWithHistory, basename])
 
   const navigate = useCallback((to: string) => {
     if (syncWithHistory) {
-      window.history.pushState(null, "", to)
+      window.history.pushState(null, "", withBasename(basename, to))
     }
     setPath(to)
-  }, [syncWithHistory])
+  }, [syncWithHistory, basename])
 
   return (
-    <RouterContext.Provider value={{ path, navigate }}>
+    <RouterContext.Provider value={{ path, navigate, basename }}>
       {children}
     </RouterContext.Provider>
   )
@@ -67,10 +95,10 @@ interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"
 }
 
 export function Link({ to, children, onClick, ...rest }: LinkProps) {
-  const { navigate } = useContext(RouterContext)
+  const { navigate, basename } = useContext(RouterContext)
   return (
     <a
-      href={to}
+      href={withBasename(basename, to)}
       onClick={(e) => {
         e.preventDefault()
         onClick?.(e)
