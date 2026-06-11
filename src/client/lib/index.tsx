@@ -20,7 +20,7 @@ import { ExplainerPage as ExplainerPageInner } from "../game/components/Explaine
  */
 export function Arithmix(): ReactElement {
   return (
-    <Router>
+    <Router initialPath="/arithmix">
       <GlobalStyles />
       <Routes>
         <Route

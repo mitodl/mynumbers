@@ -9,7 +9,7 @@ const ExplainerPage = lazy(() => import("./components/ExplainerPage").then(m => 
 
 const root = createRoot(document.getElementById("root")!)
 root.render(
-  <Router>
+  <Router syncWithHistory>
     <GlobalStyles />
     <Routes>
       <Route path="/arithmix" element={

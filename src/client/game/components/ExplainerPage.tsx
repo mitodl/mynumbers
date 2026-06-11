@@ -35,7 +35,7 @@ export function ExplainerPage() {
     }
   }, [])
 
-  const goHome = useCallback(() => navigate("/"), [navigate])
+  const goHome = useCallback(() => navigate("/arithmix"), [navigate])
 
   // Clear the transient "jumped" highlight after it has played.
   useEffect(() => {
