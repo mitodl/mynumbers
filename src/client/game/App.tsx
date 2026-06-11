@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { Link } from "./router"
+import { Link, useSyncWithHistory, appendSegment } from "./router"
 import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "./context/GameContext"
 import { Logo } from "./components/Logo"
@@ -55,7 +55,7 @@ const ExplainerLinkRow = styled.div`
   }
 `
 
-const ExplainerLink = styled(Link)`
+const explainerLinkCss = `
   display: inline-block;
   padding: clamp(10px, 1.1vw, 16px) clamp(20px, 2.4vw, 36px);
   border: 2px solid #fff;
@@ -79,9 +79,13 @@ const ExplainerLink = styled(Link)`
   }
 `
 
+const ExplainerLink = styled(Link)`${explainerLinkCss}`
+const ExplainerAnchor = styled.a`${explainerLinkCss}`
+
 export function App() {
   const state = useGameState()
   const dispatch = useGameDispatch()
+  const syncWithHistory = useSyncWithHistory()
   const { startTimer } = useTimer()
   const {
     generatePuzzle,
@@ -150,9 +154,15 @@ export function App() {
           <ModeSelector />
           <TemplateArea />
           <ExplainerLinkRow>
-            <ExplainerLink to="/explainer">
-              Inside <span>ARITHMIX</span>
-            </ExplainerLink>
+            {syncWithHistory ? (
+              <ExplainerLink to="/explainer">
+                Inside <span>ARITHMIX</span>
+              </ExplainerLink>
+            ) : (
+              <ExplainerAnchor href={appendSegment(window.location.pathname, "explainer")}>
+                Inside <span>ARITHMIX</span>
+              </ExplainerAnchor>
+            )}
           </ExplainerLinkRow>
           <HomeLightboard />
         </Container>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useNavigate } from "../router"
+import { useNavigate, useSyncWithHistory, stripSegment } from "../router"
 import { ExplainerContainer, ExplainerGlobalStyles } from "./ExplainerStyles"
 import { FitToViewport } from "./FitToViewport"
 import { ExpressionTree } from "./explainer/ExpressionTree"
@@ -19,6 +19,7 @@ const SUBTITLES: Record<number, string> = {
 
 export function ExplainerPage() {
   const navigate = useNavigate()
+  const syncWithHistory = useSyncWithHistory()
   const [current, setCurrent] = useState(1)
   const [jumpedSlide, setJumpedSlide] = useState<number | null>(null)
 
@@ -35,7 +36,13 @@ export function ExplainerPage() {
     }
   }, [])
 
-  const goHome = useCallback(() => navigate("/"), [navigate])
+  const goHome = useCallback(() => {
+    if (syncWithHistory) {
+      navigate("/")
+    } else {
+      window.location.assign(stripSegment(window.location.pathname, "explainer"))
+    }
+  }, [syncWithHistory, navigate])
 
   // Clear the transient "jumped" highlight after it has played.
   useEffect(() => {
@@ -351,7 +358,7 @@ export function ExplainerPage() {
                 <a className="ex-cta ex-cta-primary" href="https://learn.mit.edu" target="_blank" rel="noopener">
                   Explore Courses
                 </a>
-                <button className="ex-cta ex-cta-secondary" onClick={() => navigate("/")}>
+                <button className="ex-cta ex-cta-secondary" onClick={goHome}>
                   Play ARITHMIX →
                 </button>
               </div>

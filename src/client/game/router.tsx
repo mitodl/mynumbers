@@ -4,13 +4,28 @@ interface RouterContextValue {
   path: string
   navigate: (to: string) => void
   basename: string
+  syncWithHistory: boolean
 }
 
 const RouterContext = createContext<RouterContextValue>({
   path: "/",
   navigate: () => {},
   basename: "",
+  syncWithHistory: false,
 })
+
+/** Append a path segment to a pathname, e.g. ("/games", "explainer") -> "/games/explainer". */
+export function appendSegment(pathname: string, segment: string): string {
+  const base = pathname.replace(/\/+$/, "")
+  return `${base}/${segment}`
+}
+
+/** Remove a trailing path segment from a pathname, e.g. ("/games/explainer", "explainer") -> "/games". */
+export function stripSegment(pathname: string, segment: string): string {
+  const base = pathname.replace(/\/+$/, "")
+  const suffix = `/${segment}`
+  return (base.endsWith(suffix) ? base.slice(0, -suffix.length) : base) || "/"
+}
 
 /** Join a basename with an app-relative path, e.g. ("/arithmix", "/explainer") -> "/arithmix/explainer". */
 function withBasename(basename: string, to: string): string {
@@ -75,7 +90,7 @@ export function Router({
   }, [syncWithHistory, basename])
 
   return (
-    <RouterContext.Provider value={{ path, navigate, basename }}>
+    <RouterContext.Provider value={{ path, navigate, basename, syncWithHistory }}>
       {children}
     </RouterContext.Provider>
   )
@@ -87,6 +102,11 @@ export function useNavigate() {
 
 export function usePath() {
   return useContext(RouterContext).path
+}
+
+/** Whether the enclosing router owns the browser URL (standalone) or the host app does (embedded). */
+export function useSyncWithHistory() {
+  return useContext(RouterContext).syncWithHistory
 }
 
 interface LinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
