@@ -21,25 +21,23 @@ A math puzzle game where you arrange numbers into equation templates to hit targ
 
 ## Local Development
 
-This is a TypeScript project with an Express server, a React client (bundled
-with webpack), and a Vite library build. You need [Node.js](https://nodejs.org/)
+This is a Vite-built React library. You need [Node.js](https://nodejs.org/)
 (v18+).
 
 ```bash
 # Install dependencies
 npm install
 
-# Build the server and client, then start the app
-npm run build
-npm start
+# Start the Vite dev server for local inspection
+npm run dev
 ```
 
-Then open http://localhost:8000/ (set `PORT` to use a different port).
+Vite prints the local URL (typically http://localhost:5173).
 
 
 ## Using ARITHMIX as a library
 
-The game and explainer can be embedded in another app. `npm run build:lib`
+The game and explainer can be embedded in another app. `npm run build`
 produces an ESM + UMD bundle (`dist/lib`) with type declarations.
 `react`, `react-dom`, `@emotion/react`, and `@emotion/styled` are peer
 dependencies that the host app provides.

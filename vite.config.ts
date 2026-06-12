@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     react(),
     dts({
-      tsconfigPath: './tsconfig.client.json',
+      tsconfigPath: './tsconfig.json',
       include: ['src/client'],
       outDir: 'dist/lib',
       insertTypesEntry: true,
