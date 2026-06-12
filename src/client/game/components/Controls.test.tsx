@@ -5,7 +5,7 @@ import { renderWithGame } from "../testUtils"
 
 describe("Controls", () => {
   it("shows New Puzzle (and not End Rush) in practice mode", () => {
-    renderWithGame(<Controls onNewPuzzle={jest.fn()} onEndRush={jest.fn()} />, {
+    renderWithGame(<Controls onNewPuzzle={vi.fn()} onEndRush={vi.fn()} />, {
       actions: [{ type: "START_PRACTICE" }],
     })
     expect(screen.getByRole("button", { name: "New Puzzle" })).toBeInTheDocument()
@@ -14,9 +14,9 @@ describe("Controls", () => {
 
   it("calls onNewPuzzle when New Puzzle is clicked", async () => {
     const user = userEvent.setup()
-    const onNewPuzzle = jest.fn()
+    const onNewPuzzle = vi.fn()
     renderWithGame(
-      <Controls onNewPuzzle={onNewPuzzle} onEndRush={jest.fn()} />,
+      <Controls onNewPuzzle={onNewPuzzle} onEndRush={vi.fn()} />,
       { actions: [{ type: "START_PRACTICE" }] },
     )
 
@@ -25,7 +25,7 @@ describe("Controls", () => {
   })
 
   it("shows End Rush (and not New Puzzle) in rush mode", () => {
-    renderWithGame(<Controls onNewPuzzle={jest.fn()} onEndRush={jest.fn()} />, {
+    renderWithGame(<Controls onNewPuzzle={vi.fn()} onEndRush={vi.fn()} />, {
       actions: [{ type: "START_RUSH", minutes: 3 }],
     })
     expect(screen.getByRole("button", { name: "End Rush" })).toBeInTheDocument()
@@ -34,10 +34,10 @@ describe("Controls", () => {
 
   it("calls onEndRush only when the confirmation is accepted", async () => {
     const user = userEvent.setup()
-    const onEndRush = jest.fn()
-    const confirmSpy = jest.spyOn(window, "confirm").mockReturnValue(false)
+    const onEndRush = vi.fn()
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false)
 
-    renderWithGame(<Controls onNewPuzzle={jest.fn()} onEndRush={onEndRush} />, {
+    renderWithGame(<Controls onNewPuzzle={vi.fn()} onEndRush={onEndRush} />, {
       actions: [{ type: "START_RUSH", minutes: 3 }],
     })
 
@@ -52,7 +52,7 @@ describe("Controls", () => {
   })
 
   it("always renders Reset and Menu buttons", () => {
-    renderWithGame(<Controls onNewPuzzle={jest.fn()} onEndRush={jest.fn()} />, {
+    renderWithGame(<Controls onNewPuzzle={vi.fn()} onEndRush={vi.fn()} />, {
       actions: [{ type: "START_PRACTICE" }],
     })
     expect(screen.getByRole("button", { name: "Reset" })).toBeInTheDocument()

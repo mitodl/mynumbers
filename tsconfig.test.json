@@ -3,10 +3,10 @@
   "compilerOptions": {
     "rootDir": ".",
     "noEmit": true,
-    "types": ["jest", "node"]
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "src/client/**/*",
-    "jest.setup.ts"
+    "vitest.setup.ts"
   ]
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
@@ -7,6 +7,12 @@ import { resolve } from 'path'
 // react / react-dom / @emotion are left as peer dependencies so the
 // host app provides a single shared copy.
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+    include: ['src/client/**/*.test.{ts,tsx}'],
+  },
   plugins: [
     react(),
     dts({
