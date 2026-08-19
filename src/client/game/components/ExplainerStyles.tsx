@@ -28,15 +28,14 @@ export const ExplainerGlobalStyles = () => (
   <Global
     styles={css`
       @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fredoka+One&family=Patrick+Hand&family=Architects+Daughter&family=Kalam:wght@400;700&display=swap');
-
-      body {
-        background: #e8e8e8;
-      }
     `}
   />
 )
 
 export const ExplainerContainer = styled.div`
+  /* Painted on the container rather than on body, which would reach past the
+     explainer when it is embedded in a host app. */
+  background: #e8e8e8;
   --mit-red: #750014;
   --mit-red-2: #A31F34;
   --ink: #0f172a;
