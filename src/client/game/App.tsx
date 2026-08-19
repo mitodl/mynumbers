@@ -12,7 +12,10 @@ import { useTimer } from "./hooks/useTimer"
 import { useGameActions } from "./hooks/useGameActions"
 import { useGameSize } from "./hooks/useGameSize"
 
+/** The game's surface: everything the game paints, it paints inside this. */
 const Page = styled.div`
+  font-family: var(--am-font);
+  background: var(--am-light-gray-1);
   display: flex;
   flex-direction: column;
   align-items: center;

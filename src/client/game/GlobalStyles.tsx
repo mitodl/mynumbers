@@ -28,12 +28,11 @@ const globalCss = css`
     --am-modal-shadow: 0 4px 8px rgba(19, 20, 21, 0.08);
   }
 
-  body {
-    font-family: var(--am-font);
-    background: var(--am-light-gray-1);
-    margin: 0;
-    padding: 10px;
-  }
+  /* Nothing here styles the page itself. Embedded in a host app, a rule on
+     body would reach past the game — padding indents the host's own layout,
+     and a background repaints it — so the game's surface is styled on its own
+     root instead (see Page in App.tsx). A standalone page sets its own body
+     styles in index.html. */
 
   /* ──────────────────────────────────────────────────────────────────────
      Size tokens. The game's root element carries data-am-size (set from the
