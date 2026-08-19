@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import { css } from "@emotion/react"
 
 /**
  * Shared button primitives from the MIT design system, as used across the
@@ -85,4 +86,20 @@ export const OutlineButtonL = styled(OutlineButton)`
   padding: 18px 24px;
   font-size: 16px;
   line-height: 16px;
+`
+
+/**
+ * A number tile's size, shared by the bank and by a tile placed in a slot so
+ * that placing one never resizes it. Slots are wider than a tile and hold it
+ * centred, which keeps the row's width fixed as tiles go in and out.
+ */
+export const numberTileSize = css`
+  /* Explicit, because these rules are shared between a button and a div and the
+     browser only defaults buttons to border-box — the same min-width and padding
+     would otherwise measure differently in a slot than in the bank. */
+  box-sizing: border-box;
+  height: var(--am-tile);
+  min-width: var(--am-tile);
+  padding: 0 var(--am-tile-px);
+  font-size: var(--am-tile-font);
 `

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "../context/GameContext"
-import { PrimaryButton } from "./ui"
+import { PrimaryButton, numberTileSize } from "./ui"
 
 const BankRow = styled.div`
   display: flex;
@@ -22,10 +22,7 @@ const BankRow = styled.div`
 `
 
 const BankChip = styled(PrimaryButton)`
-  height: var(--am-tile);
-  min-width: var(--am-tile);
-  padding: 0 var(--am-tile-px);
-  font-size: var(--am-tile-font);
+  ${numberTileSize};
   cursor: grab;
 `
 
