@@ -106,6 +106,10 @@ const CtaRow = styled.div`
     gap: 12px;
     padding: 0 20px 20px;
   }
+  [data-am-size="small"] & {
+    flex-direction: column;
+    align-items: center;
+  }  
 `
 
 const ScoreRow = styled.div`
@@ -173,6 +177,9 @@ const Beaver = styled.img`
 const GrowButton = styled(PrimaryButton)`
   flex: 1 1 auto;
   min-width: 0;
+  [data-am-size="small"] & {
+    width: 100%;
+  }
 `
 
 interface ModalsProps {

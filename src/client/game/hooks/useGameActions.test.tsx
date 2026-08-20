@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react"
 import { useEffect, type Dispatch } from "react"
 import { GameProvider, useGameState, useGameDispatch } from "../context/GameContext"
-import { useGameActions } from "./useGameActions"
+import { useGameActions, SOLVED_HOLD_MS } from "./useGameActions"
 import type { GameAction, GameMode, Puzzle } from "../types"
 
 // 2 + 3 = 5, with 9 left over in the bank.
@@ -90,11 +90,15 @@ describe("useGameActions", () => {
 
     solve()
     expect(screen.getByTestId("probe")).toHaveTextContent("Correct!")
-    // Still the solved board: the answer stays up long enough to be read.
+
+    // The solved board holds for the whole duration, not a flicker of it.
+    act(() => {
+      vi.advanceTimersByTime(SOLVED_HOLD_MS - 1)
+    })
     expect(bankId()).toBe("t0")
 
     act(() => {
-      vi.advanceTimersByTime(900)
+      vi.advanceTimersByTime(1)
     })
     expect(bankId()).not.toBe("t0")
   })
@@ -111,7 +115,7 @@ describe("useGameActions", () => {
     solve()
     dispatch(ending)
     act(() => {
-      vi.advanceTimersByTime(900)
+      vi.advanceTimersByTime(SOLVED_HOLD_MS)
     })
 
     // The board behind the summary modal is the one the score refers to.
@@ -125,7 +129,7 @@ describe("useGameActions", () => {
     dispatch({ type: "END_RUSH" })
     dispatch({ type: "HIDE_GAME_OVER_MODAL" })
     act(() => {
-      vi.advanceTimersByTime(900)
+      vi.advanceTimersByTime(SOLVED_HOLD_MS)
     })
 
     expect(bankId()).toBe("t0")
@@ -139,7 +143,7 @@ describe("useGameActions", () => {
     // START_RUSH clears the board, and the puzzle for the new session comes
     // from the app's generate-on-empty effect, not from the practice solve.
     act(() => {
-      vi.advanceTimersByTime(900)
+      vi.advanceTimersByTime(SOLVED_HOLD_MS)
     })
 
     expect(bankId()).toBeNull()

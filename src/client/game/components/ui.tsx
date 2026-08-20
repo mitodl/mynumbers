@@ -78,6 +78,9 @@ export const OutlineButton = styled.button`
     padding-left: 12px;
     padding-right: 24px;
   }
+  [data-am-size="small"] & {
+    width: 100%;
+  }
 `
 
 /** Outline button at "Button L" scale, for modal CTA rows. */
