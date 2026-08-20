@@ -8,6 +8,13 @@ import {
 import { puzzleRush, puzzleCheck, type PuzzleOut, type CheckResult } from "../generator"
 import type { BankItem, Puzzle } from "../types"
 
+/**
+ * How long a solved board stays up before the next puzzle replaces it. The
+ * tiles fade to green over 200ms, so this is the hold plus that fade — short
+ * values read as a flicker rather than as confirmation that the answer landed.
+ */
+export const SOLVED_HOLD_MS = 3000
+
 export function useGameActions() {
   const state = useGameState()
   const dispatch = useGameDispatch()
@@ -110,8 +117,9 @@ export function useGameActions() {
   }, [state, dispatch])
 
   /**
-   * A solved board hands out the next puzzle after a pause long enough for its
-   * green "solved" state to register. This is an effect rather than a timeout
+   * A solved board hands out the next puzzle once its green "solved" state has
+   * had time to be read (see SOLVED_HOLD_MS). This is an effect rather than a
+   * timeout
    * fired from the check so that the pending advance belongs to the session
    * that scheduled it: React clears it whenever that session goes away — the
    * mode changes, the session ends, or the game unmounts — and a puzzle built
@@ -123,7 +131,7 @@ export function useGameActions() {
   const sessionOver = isSessionOver(state)
   useEffect(() => {
     if (!state.puzzleSolved || sessionOver) return
-    const timer = setTimeout(generatePuzzle, 900)
+    const timer = setTimeout(generatePuzzle, SOLVED_HOLD_MS)
     return () => clearTimeout(timer)
   }, [state.puzzleSolved, sessionOver, generatePuzzle])
 

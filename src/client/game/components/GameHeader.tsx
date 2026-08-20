@@ -26,6 +26,10 @@ const MetaRow = styled.div`
   font-weight: 500;
   line-height: 1.5;
   white-space: nowrap;
+  [data-am-size="small"] & {
+    gap: 24px;
+    font-size: 14px;
+  }
 `
 
 const MetaLabel = styled.span`
@@ -54,6 +58,13 @@ const Instruction = styled.p`
   font-weight: 400;
   line-height: 20px;
   text-align: center;
+
+  /* Smaller type, looser leading: the line wraps at this tier, and 16/20 sets
+     the wrapped lines too tight. */
+  [data-am-size="small"] & {
+    font-size: 14px;
+    line-height: 24px;
+  }
 `
 
 const MODE_LABELS: Record<string, string> = {

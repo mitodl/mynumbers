@@ -28,7 +28,7 @@ const TemplateWrapper = styled.div`
 // min-content width, so only the boxes compress.
 const EquationRow = styled.div`
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--am-eq-gap);
