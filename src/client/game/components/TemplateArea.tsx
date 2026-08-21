@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { useGameState, useGameDispatch } from "../context/GameContext"
+import { numberTileSize } from "./ui"
 import type { BankItem } from "../types"
 
 const DISPLAY_OPS: Record<string, string> = {
@@ -28,7 +29,7 @@ const TemplateWrapper = styled.div`
 // min-content width, so only the boxes compress.
 const EquationRow = styled.div`
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--am-eq-gap);
@@ -57,7 +58,8 @@ const SlotWrapper = styled.div<{ $filled: boolean }>`
      one line. Never grows, so short equations keep the designed slot width. */
   flex: 0 1 auto;
   width: calc(var(--am-slot-px) * 2 + 12px);
-  min-width: calc(var(--am-tile) * 0.8);
+  /* Never narrower than the tile it has to hold. */
+  min-width: var(--am-tile);
   height: calc(var(--am-slot-py) * 2 + 26px);
   border-bottom: ${p =>
     p.$filled ? "1px solid transparent" : "1px solid var(--am-text-secondary)"};
@@ -68,20 +70,19 @@ const SlotWrapper = styled.div<{ $filled: boolean }>`
   }
 `
 
-// Fills its slot exactly, so dropping a number in cannot change the width of
-// the row — the tile's own padding would otherwise make it wider than the blank
-// it replaces and push the target out of view.
+// The same size as a tile in the bank, so placing one does not resize it, and
+// held at that size rather than stretched to the slot. The slot keeps its own
+// width, so the row's width does not change as tiles go in and out either.
 const SlotTile = styled.div<{ $correct?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: var(--am-tile);
+  flex: none;
+  ${numberTileSize};
   border-radius: var(--am-radius);
   background: ${p => (p.$correct ? "var(--am-green)" : "var(--am-mit-red)")};
   box-shadow: var(--am-btn-shadow);
   color: var(--am-white);
-  font-size: var(--am-tile-font);
   font-weight: 500;
   line-height: 16px;
   cursor: grab;

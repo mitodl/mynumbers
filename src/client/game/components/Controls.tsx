@@ -65,6 +65,9 @@ const ModeGroup = styled.div`
   align-items: center;
   gap: 16px;
   min-width: 0;
+  [data-am-size="small"] & {
+    width: 100%;
+  }
 `
 
 const ModeButton = styled(OutlineButton)`
